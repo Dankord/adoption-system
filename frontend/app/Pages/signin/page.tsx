@@ -1,14 +1,47 @@
-"use client"
+"use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useAuth } from "@/lib/auth-context";
+import {
+  ROUTES,
+  defaultAuthenticatedPath,
+  isProtectedPath,
+} from "@/lib/routes";
+import { useRouter, useSearchParams } from "next/navigation";
+
+function resolvePostLoginPath(
+  callback: string | null,
+  profileComplete: boolean,
+): string {
+  if (callback && isProtectedPath(callback)) {
+    return callback;
+  }
+
+  return defaultAuthenticatedPath(profileComplete);
+}
 
 export default function SignInPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900" />
+        </div>
+      }
+    >
+      <SignInForm />
+    </Suspense>
+  );
+}
+
+function SignInForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { signIn } = useAuth();
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -16,10 +49,17 @@ export default function SignInPage() {
     setIsLoading(true);
 
     try {
-      await signIn(email, password);
-      window.location.href = "/Pages/dashboard";
-    } catch {
-      setError("Invalid email or password");
+      const user = await signIn(email, password);
+      const callback = searchParams.get("callback");
+      router.replace(
+        resolvePostLoginPath(callback, Boolean(user.profile_completed_at)),
+      );
+    } catch (err: unknown) {
+      if (err instanceof Error && err.message.includes("401")) {
+        setError("Invalid email or password");
+      } else {
+        setError("Something went wrong. Please try again.");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -90,7 +130,7 @@ export default function SignInPage() {
         <p className="mt-6 text-center text-sm text-gray-600">
           Don&apos;t have an account?{" "}
           <a
-            href="/Pages/signin/auth/registration"
+            href={ROUTES.registration}
             className="text-gray-900 font-medium hover:underline"
           >
             Register here

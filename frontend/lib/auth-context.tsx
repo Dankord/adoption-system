@@ -1,20 +1,25 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import axios from "axios";
+import api from "@/lib/api";
+import { ROUTES } from "@/lib/routes";
 
-interface User {
-  id: string;
-  name: string;
+export interface User {
+  id: number | string;
+  name: string | null;
   email: string;
+  profile_completed_at: string | null;
 }
 
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  signIn: (email: string, password: string) => Promise<void>;
-  signUp: (name: string, email: string, password: string) => Promise<void>;
-  signOut: () => void;
+  signIn: (email: string, password: string) => Promise<User>;
+  signUp: (email: string, password: string) => Promise<void>;
+  signOut: () => Promise<void>;
+  refreshUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -24,34 +29,60 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
+    let mounted = true;
+
+    const checkAuth = async () => {
       try {
-        setUser(JSON.parse(storedUser));
-      } catch {
-        localStorage.removeItem("user");
+        const res = await api.get("/user");
+        if (mounted) {
+          setUser(res.data.user);
+        }
+      } catch (err) {
+        if (
+          axios.isAxiosError(err) &&
+          err.response?.status === 401
+        ) {
+          await api.post("/logout").catch(() => {});
+        }
+        if (mounted) {
+          setUser(null);
+        }
+      } finally {
+        if (mounted) {
+          setIsLoading(false);
+        }
       }
-    }
-    setIsLoading(false);
+    };
+
+    checkAuth();
+
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    // TODO: Replace with actual API call to backend
-    const mockUser: User = { id: "1", name: email.split("@")[0], email };
-    setUser(mockUser);
-    localStorage.setItem("user", JSON.stringify(mockUser));
+    const res = await api.post("/login", { email, password });
+    setUser(res.data.user);
+    return res.data.user as User;
   };
 
-  const signUp = async (name: string, email: string, password: string) => {
-    // TODO: Replace with actual API call to backend
-    const mockUser: User = { id: "2", name, email };
-    setUser(mockUser);
-    localStorage.setItem("user", JSON.stringify(mockUser));
+  const signUp = async (email: string, password: string) => {
+    await api.post("/register", { email, password });
   };
 
-  const signOut = () => {
-    setUser(null);
-    localStorage.removeItem("user");
+  const signOut = async () => {
+    try {
+      await api.post("/logout");
+    } finally {
+      setUser(null);
+      window.location.href = ROUTES.signin;
+    }
+  };
+
+  const refreshUser = async () => {
+    const res = await api.get("/user");
+    setUser(res.data.user);
   };
 
   return (
@@ -63,6 +94,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         signIn,
         signUp,
         signOut,
+        refreshUser,
       }}
     >
       {children}
