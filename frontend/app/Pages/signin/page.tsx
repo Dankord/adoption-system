@@ -1,23 +1,28 @@
 "use client";
 
 import { useState, Suspense } from "react";
-import { useAuth } from "@/lib/auth-context";
+import { useAuth, type User } from "@/lib/auth-context";
 import {
   ROUTES,
+  canAccessPath,
   defaultAuthenticatedPath,
   isProtectedPath,
 } from "@/lib/routes";
 import { useRouter, useSearchParams } from "next/navigation";
 
-function resolvePostLoginPath(
-  callback: string | null,
-  profileComplete: boolean,
-): string {
-  if (callback && isProtectedPath(callback)) {
+function resolvePostLoginPath(callback: string | null, user: User): string {
+  if (
+    callback &&
+    isProtectedPath(callback) &&
+    canAccessPath(callback, user.role)
+  ) {
     return callback;
   }
 
-  return defaultAuthenticatedPath(profileComplete);
+  return defaultAuthenticatedPath(
+    user.role,
+    Boolean(user.profile_completed_at),
+  );
 }
 
 export default function SignInPage() {
@@ -51,9 +56,7 @@ function SignInForm() {
     try {
       const user = await signIn(email, password);
       const callback = searchParams.get("callback");
-      router.replace(
-        resolvePostLoginPath(callback, Boolean(user.profile_completed_at)),
-      );
+      router.replace(resolvePostLoginPath(callback, user));
     } catch (err: unknown) {
       if (err instanceof Error && err.message.includes("401")) {
         setError("Invalid email or password");

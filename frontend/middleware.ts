@@ -1,11 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import {
-  ROUTES,
-  isGuestPath,
-  isProtectedPath,
-  signinWithCallback,
-} from "@/lib/routes";
+import { isGuestPath, isProtectedPath, signinWithCallback } from "@/lib/routes";
 
 const AUTH_COOKIE = "auth_token";
 
@@ -19,8 +14,9 @@ export function middleware(request: NextRequest) {
     );
   }
 
+  // Signed-in users on guest pages are redirected by AuthGuard (role-aware).
   if (isGuestPath(pathname) && hasToken) {
-    return NextResponse.redirect(new URL(ROUTES.dashboard, request.url));
+    return NextResponse.next();
   }
 
   return NextResponse.next();
