@@ -11,7 +11,7 @@ export function SiteHeader() {
   return (
     <header className="bg-[#FFFAF4] shadow">
       <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-        <Link href={ROUTES.home} className="text-xl font-semibold text-gray-900">
+        <Link href={ROUTES.home} className="text-xl font-normal text-gray-900" style={{ fontFamily: "var(--font-dm-serif)" }}>
           Adoption System
         </Link>
 
