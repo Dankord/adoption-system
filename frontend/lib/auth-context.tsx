@@ -5,12 +5,26 @@ import axios from "axios";
 import api from "@/lib/api";
 import { ROUTES, UserRole } from "@/lib/routes";
 
+export interface Customer {
+  id: number;
+  user_id: number;
+  customer_name: string;
+  housing_type: string;
+  has_space: boolean;
+  previous_owner: boolean;
+  household_number: number;
+  has_pets: boolean;
+  typical_sched: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
 export interface User {
   id: number | string;
-  name: string | null;
   email: string;
   role: UserRole;
   profile_completed_at: string | null;
+  customer?: Customer;
 }
 
 interface AuthContextType {
