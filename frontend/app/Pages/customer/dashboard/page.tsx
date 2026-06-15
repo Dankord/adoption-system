@@ -10,7 +10,7 @@ export default function CustomerDashboardPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <SiteHeader />
+      {/* <SiteHeader />
 
       <main className="max-w-7xl mx-auto px-4 py-8">
         <div className="bg-white rounded-lg shadow p-6">
@@ -28,7 +28,7 @@ export default function CustomerDashboardPage() {
             Back to home
           </Link>
         </div>
-      </main>
+      </main> */}
     </div>
   );
 }
