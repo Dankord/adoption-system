@@ -41,7 +41,7 @@ import ScheduleCard from "./components/ScheduleCard";
 
 const formSchema = z.object({
   fullName: z.string().min(2, "Name must be at least 2 characters.").max(32, "Name must be at most 32 characters.").regex(
-    /^[A-Za-z][A-Za-z\s]*$/,
+    /^[A-Za-z][A-Za-z\s.'-]*$/,
     "Name can only contain letters and spaces and must start with a letter."
   ),
   housingType: z.enum(["apartment", "condo", "townHouse", "house", "farmRural"]),
@@ -67,6 +67,8 @@ export default function OnboardingPage() {
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
+    mode: "onChange",
+    reValidateMode: "onChange",
     defaultValues: {
       fullName: "",
       housingType: "house",
@@ -117,15 +119,15 @@ export default function OnboardingPage() {
     const housingType = isFarm ? "farm" : values.housingType;
 
     try {
-      await api.patch("/profile", {
-        name: values.fullName.trim(),
+      await api.post("/profile", {
         profile: {
+          customer_name: values.fullName.trim(),
           housing_type: housingType,
-          has_yard: values.hasSpace,
-          previous_pet_experience: values.previousOwner,
-          household_size: values.householdNumber,
-          currently_has_pets: values.hasPet === "yes",
-          typical_schedule: values.typicalSched,
+          has_space: values.hasSpace,
+          previous_owner: values.previousOwner,
+          household_number: values.householdNumber,
+          has_pets: values.hasPet === "yes",
+          typical_sched: values.typicalSched,
         },
       });
       await refreshUser();

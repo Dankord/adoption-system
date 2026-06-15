@@ -11,7 +11,6 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
 #[Fillable([
-    'name',
     'email',
     'password',
     'role',
@@ -48,5 +47,9 @@ class User extends Authenticatable
     public function isAdmin(): bool
     {
         return $this->role === 'admin';
+    }
+
+    public function customer() {
+        return $this->hasOne(Customer::class);
     }
 }

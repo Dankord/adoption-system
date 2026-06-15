@@ -31,7 +31,7 @@ class AuthController extends Controller
 
     public function login(Request $request): JsonResponse
     {
-        $request->validate([
+        $request->validate([    
             'email' => ['required', 'string', 'email'],
             'password' => ['required', 'string'],
         ]);
@@ -68,19 +68,19 @@ class AuthController extends Controller
         ]);
     }
 
-    public function updateProfile(Request $request): JsonResponse
-    {
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-        ]);
+    // public function updateProfile(Request $request): JsonResponse
+    // {
+    //     $data = $request->validate([
+    //         'name' => ['required', 'string', 'max:255'],
+    //     ]);
 
-        $user = $request->user();
-        $user->fill($data);
-        $user->profile_completed_at = now();
-        $user->save();
+    //     $user = $request->user();
+    //     $user->fill($data);
+    //     $user->profile_completed_at = now();
+    //     $user->save();
 
-        return response()->json([
-            'user' => $user,
-        ]);
-    }
+    //     return response()->json([
+    //         'user' => $user,
+    //     ]);
+    // }
 }
