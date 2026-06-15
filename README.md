@@ -39,7 +39,8 @@ Setup process:
 for laravel: (make sure to cd backend)
     - composer require laravel/sanctum
 
-for next.js/react: (make sure to cd frontend)
+## for next.js/react: (make sure to cd frontend)
+
     - npm install axios (request API)
     - npm install @tanstack/react-query (For API data fetching, caching and state management)
     - npm install react-hook-form (form)
