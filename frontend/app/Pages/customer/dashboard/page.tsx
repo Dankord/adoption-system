@@ -1,34 +1,63 @@
 "use client";
 
+import { useState } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { SiteHeader } from "@/components/site-header";
-import { ROUTES } from "@/lib/routes";
-import Link from "next/link";
+import CustomerCard from "./components/CustomerCards";
+import { MenuBar } from "./components/MenuBar";
+import CustomerMessages from "./components/CustomerMessages";
+import CustomerMyApplication from "./components/CustomerMyApplications";
+import CustomerForYouCard from "./components/CustomerForYouCard";
+import CustomerPetCare from "./components/CustomerPetCare";
+import {
+  PawPrint,
+} from "lucide-react";
+
+type TabKey = "applications" | "for-you" | "messages" | "pet-care";
 
 export default function CustomerDashboardPage() {
   const { user } = useAuth();
+  const [activeTab, setActiveTab] = useState<TabKey>("applications");
+
+  const renderContent = () => {
+    switch (activeTab) {
+      case "applications":
+        return <CustomerMyApplication />;
+      case "for-you":
+        return <CustomerForYouCard />;
+      case "messages":
+        return <CustomerMessages />;
+      case "pet-care":
+        return <CustomerPetCare />;
+      default:
+        return <CustomerMyApplication />;
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* <SiteHeader />
+    <div className="min-h-screen bg-[#FDF6EE]">
+      <SiteHeader />
 
       <main className="max-w-7xl mx-auto px-4 py-8">
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">
-            Customer Dashboard
-          </h2>
-          <p className="text-gray-600 mb-4">
-            Welcome back{user?.name ? `, ${user.name}` : ""}. Browse pets and
-            manage your adoption applications.
-          </p>
-          <Link
-            href={ROUTES.home}
-            className="text-sm text-gray-700 hover:text-gray-900 underline"
-          >
-            Back to home
-          </Link>
+        <div className="my-10">
+          <div className="flex gap-2 pb-2">
+          <h1 className="text-4xl font-bold" style={{ fontFamily: "var(--font-dm-serif)" }}>Welcome, {user?.customer?.customer_name}</h1>
+          <PawPrint height="30" width="30"/>
+          </div>
+          <p className="text-[#7A6150]">Track your adoption journey and pet care reminders all in one place.</p>
         </div>
-      </main> */}
+
+        <div className="flex gap-2 mb-8">
+          <CustomerCard />
+          <CustomerCard />
+          <CustomerCard />
+          <CustomerCard />
+        </div>
+
+        <MenuBar activeTab={activeTab} onTabChange={setActiveTab} />
+
+        {renderContent()}
+      </main>
     </div>
   );
 }
