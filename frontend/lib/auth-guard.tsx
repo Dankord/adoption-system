@@ -3,8 +3,10 @@
 import { useAuth } from "@/lib/auth-context";
 import {
   ROUTES,
+  canAccessPath,
   defaultAuthenticatedPath,
   isGuestPath,
+  requiresOnboarding,
   signinWithCallback,
 } from "@/lib/routes";
 import { usePathname, useRouter } from "next/navigation";
@@ -18,15 +20,13 @@ function LoadingScreen() {
   );
 }
 
-type AccessState =
-  | "loading"
-  | "allowed"
-  | "redirecting";
+type AccessState = "loading" | "allowed" | "redirecting";
 
 function resolveAccess(
   pathname: string,
   isLoading: boolean,
   isAuthenticated: boolean,
+  role: string | undefined,
   profileComplete: boolean,
 ): AccessState {
   if (isLoading) {
@@ -35,6 +35,7 @@ function resolveAccess(
 
   const onGuestPage = isGuestPath(pathname);
   const onOnboarding = pathname === ROUTES.onboarding;
+  const needsOnboarding = requiresOnboarding(role, profileComplete);
 
   if (!isAuthenticated) {
     return onGuestPage ? "allowed" : "redirecting";
@@ -44,11 +45,15 @@ function resolveAccess(
     return "redirecting";
   }
 
-  if (!profileComplete && !onOnboarding) {
+  if (needsOnboarding) {
+    return onOnboarding ? "allowed" : "redirecting";
+  }
+
+  if (onOnboarding) {
     return "redirecting";
   }
 
-  if (profileComplete && onOnboarding) {
+  if (!canAccessPath(pathname, role)) {
     return "redirecting";
   }
 
@@ -61,11 +66,18 @@ export function AuthGuard({ children }: { children: ReactNode }) {
   const router = useRouter();
 
   const profileComplete = Boolean(user?.profile_completed_at);
+  const role = user?.role;
 
   const access = useMemo(
     () =>
-      resolveAccess(pathname, isLoading, isAuthenticated, profileComplete),
-    [pathname, isLoading, isAuthenticated, profileComplete],
+      resolveAccess(
+        pathname,
+        isLoading,
+        isAuthenticated,
+        role,
+        profileComplete,
+      ),
+    [pathname, isLoading, isAuthenticated, role, profileComplete],
   );
 
   useEffect(() => {
@@ -79,19 +91,17 @@ export function AuthGuard({ children }: { children: ReactNode }) {
     }
 
     if (isGuestPath(pathname)) {
-      router.replace(defaultAuthenticatedPath(profileComplete));
+      router.replace(defaultAuthenticatedPath(role, profileComplete));
       return;
     }
 
-    if (!profileComplete && pathname !== ROUTES.onboarding) {
+    if (requiresOnboarding(role, profileComplete)) {
       router.replace(ROUTES.onboarding);
       return;
     }
 
-    if (profileComplete && pathname === ROUTES.onboarding) {
-      router.replace(ROUTES.dashboard);
-    }
-  }, [access, isAuthenticated, pathname, profileComplete, router]);
+    router.replace(defaultAuthenticatedPath(role, profileComplete));
+  }, [access, isAuthenticated, pathname, profileComplete, role, router]);
 
   if (access === "loading" || access === "redirecting") {
     return <LoadingScreen />;

@@ -3,12 +3,13 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import axios from "axios";
 import api from "@/lib/api";
-import { ROUTES } from "@/lib/routes";
+import { ROUTES, UserRole } from "@/lib/routes";
 
 export interface User {
   id: number | string;
   name: string | null;
   email: string;
+  role: UserRole;
   profile_completed_at: string | null;
 }
 
@@ -76,7 +77,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await api.post("/logout");
     } finally {
       setUser(null);
-      window.location.href = ROUTES.signin;
+      window.location.href = ROUTES.home;
     }
   };
 
