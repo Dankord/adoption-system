@@ -17,6 +17,12 @@ class Customer extends Model
         'typical_sched'
     ];
 
+    protected $casts = [
+        'has_space' => 'boolean',
+        'previous_owner' => 'boolean',
+        'has_pets' => 'boolean',
+    ];
+
     public function user() {
         return $this->belongsTo(User::class);
     }

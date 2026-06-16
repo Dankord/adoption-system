@@ -20,11 +20,12 @@ return new class extends Migration
             $table->decimal('adoption_fee', 10, 2)->nullable();
             $table->integer('age')->nullable();
             $table->string('gender')->nullable();
-            $table->string('vac_status')->nullable(); // e.g. vaccinated / not vaccinated
+            $table->string('vac_status')->nullable(); 
             $table->boolean('is_neutered')->default(false);
-            $table->json('temperaments')->nullable(); // could also be json if structured
+            $table->json('temperaments')->nullable(); 
             $table->text('special_needs')->nullable();
             $table->json('adoption_questions')->nullable();
+            $table->string("status")->default("available");
             $table->timestamps();
         });
     }
@@ -37,16 +38,3 @@ return new class extends Migration
         Schema::dropIfExists('pet');
     }
 };
-
-        // 'name',
-        // 'species',
-        // 'image',
-        // 'adoption_fee',
-        // 'breed',
-        // 'age',
-        // 'gender',
-        // 'vac_status',
-        // 'is_neutered',
-        // 'temperaments',
-        // 'special_needs',
-        // 'adoption_questions'

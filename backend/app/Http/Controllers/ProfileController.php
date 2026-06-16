@@ -2,18 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules;
-use Illuminate\Validation\ValidationException;
 
 class ProfileController extends Controller
 {
     public function profile(Request $request): JsonResponse
     {
-        $validated = $request->validate([
+        $user = $request->user();
+
+        $flatValidation = [
+            'customer_name' => ['nullable', 'string', 'max:255'],
+            'housing_type' => ['nullable', 'string'],
+            'has_space' => ['nullable', 'boolean'],
+            'previous_owner' => ['nullable', 'boolean'],
+            'household_number' => ['nullable', 'integer', 'min:1'],
+            'has_pets' => ['nullable', 'boolean'],
+            'typical_sched' => ['nullable', 'string'],
+        ];
+
+        $nestedValidation = [
             'profile.customer_name' => ['required', 'string', 'max:255'],
             'profile.housing_type' => ['required', 'string'],
             'profile.has_space' => ['required', 'boolean'],
@@ -21,13 +29,21 @@ class ProfileController extends Controller
             'profile.household_number' => ['required', 'integer', 'min:1'],
             'profile.has_pets' => ['required', 'boolean'],
             'profile.typical_sched' => ['required', 'string'],
-        ]);
-        $user = $request->user();
+        ];
 
-        $user->customer()->updateOrCreate(
-            ['user_id' => $user->id],
-            $validated['profile']
-        );
+        if ($request->has('profile')) {
+            $validated = $request->validate($nestedValidation);
+            $data = $validated['profile'];
+        } else {
+            $validated = $request->validate($flatValidation);
+            $data = $validated;
+        }
+
+        if (!$user->customer()->exists()) {
+            $user->customer()->create($data);
+        } else {
+            $user->customer()->update($data);
+        }
 
         $user->update([
             'profile_completed_at' => now(),
@@ -35,6 +51,16 @@ class ProfileController extends Controller
 
         return response()->json([
             'user' => $user->fresh()->load('customer'),
+        ]);
+    }
+
+    public function getProfile(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        $user->load('customer');
+
+        return response()->json([
+            'user' => $user,
         ]);
     }
 }

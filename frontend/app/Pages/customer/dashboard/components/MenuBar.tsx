@@ -7,9 +7,10 @@ import {
   LucideIcon,
   MessageCircle,
   PawPrint,
+  User,
 } from "lucide-react";
 
-type TabKey = "applications" | "for-you" | "messages" | "pet-care";
+type TabKey = "applications" | "for-you" | "messages" | "pet-care" | "profile";
 
 interface TabItem {
   label: string;
@@ -27,6 +28,7 @@ const tabs: TabItem[] = [
   { label: "For you", key: "for-you", icon: Heart },
   { label: "Messages", key: "messages", icon: MessageCircle },
   { label: "Pet Care", key: "pet-care", icon: PawPrint },
+  { label: "Profile", key: "profile", icon: User },
 ];
 
 export const MenuBar = ({ activeTab, onTabChange }: MenuBarProps) => {

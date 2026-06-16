@@ -9,15 +9,18 @@ import CustomerMessages from "./components/CustomerMessages";
 import CustomerMyApplication from "./components/CustomerMyApplications";
 import CustomerForYouCard from "./components/CustomerForYouCard";
 import CustomerPetCare from "./components/CustomerPetCare";
+import CustomerProfile from "./components/CustomerProfile";
+import EditProfileModal from "./components/EditProfileModal";
 import {
   PawPrint,
 } from "lucide-react";
 
-type TabKey = "applications" | "for-you" | "messages" | "pet-care";
+type TabKey = "applications" | "for-you" | "messages" | "pet-care" | "profile";
 
 export default function CustomerDashboardPage() {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<TabKey>("applications");
+  const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
 
   const renderContent = () => {
     switch (activeTab) {
@@ -29,6 +32,8 @@ export default function CustomerDashboardPage() {
         return <CustomerMessages />;
       case "pet-care":
         return <CustomerPetCare />;
+      case "profile":
+        return <CustomerProfile onEdit={() => setIsEditProfileOpen(true)} />;
       default:
         return <CustomerMyApplication />;
     }
@@ -58,6 +63,11 @@ export default function CustomerDashboardPage() {
 
         {renderContent()}
       </main>
+
+      <EditProfileModal
+        isOpen={isEditProfileOpen}
+        onClose={() => setIsEditProfileOpen(false)}
+      />
     </div>
   );
 }
