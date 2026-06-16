@@ -6,13 +6,19 @@ import {
   CardContent,
 } from "@/components/ui/card"
 
-const CustomerCards = () => {
+interface CustomerCardsProps {
+  num: number;
+  title: string;
+
+}
+
+const CustomerCards = ({ num, title }: CustomerCardsProps) => {
   return (
     <div className="w-175">
       <Card>
         <CardContent>
-          <p className="text-xl">1</p>
-          <p className="text-s text-[#7A6150] pt-2">Application</p>
+          <p className="text-xl">{num}</p>
+          <p className="text-s text-[#7A6150] pt-2">{title}</p>
         </CardContent>
       </Card>
     </div>
