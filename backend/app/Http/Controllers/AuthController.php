@@ -16,6 +16,7 @@ class AuthController extends Controller
         $request->validate([
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8', Rules\Password::defaults()],
+            'name' => ['nullable', 'string', 'max:255'],
         ]);
 
         $user = User::create([
@@ -24,8 +25,20 @@ class AuthController extends Controller
             'role' => 'customer',
         ]);
 
+        $customerData = [
+            'customer_name' => $request->name ?? $request->email,
+            'housing_type' => 'Not set',
+            'has_space' => false,
+            'previous_owner' => false,
+            'household_number' => 1,
+            'has_pets' => false,
+            'typical_sched' => 'Not set',
+        ];
+
+        $user->customer()->create($customerData);
+
         return response()->json([
-            'user' => $user,
+            'user' => $user->fresh()->load('customer'),
         ], 201);
     }
 
@@ -47,7 +60,7 @@ class AuthController extends Controller
         $token = $user->createToken('spa')->plainTextToken;
 
         return response()->json([
-            'user' => $user->fresh(),
+            'user' => $user->fresh()->load('customer'),
             'token' => $token,
         ]);
     }

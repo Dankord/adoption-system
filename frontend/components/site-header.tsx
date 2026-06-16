@@ -29,18 +29,30 @@ export function SiteHeader() {
           Adoptify
         </Link>
 
-        <nav className="flex items-center gap-3 sm:gap-4">
+        <div className="flex items-center gap-3 sm:gap-4">
+          <Link
+            href={ROUTES.home}
+            className="text-sm text-[#7A6150] hover:text-[#C4622D] transition-colors hidden sm:inline"
+          >
+            Home
+          </Link>
+          <Link
+            href={ROUTES.howItWorks}
+            className="text-sm text-[#7A6150] hover:text-[#C4622D] transition-colors hidden sm:inline"
+          >
+            How it Works
+          </Link>
+        </div>
+
+        <div className="flex items-center gap-3 sm:gap-4">
           {!isLoading && isAuthenticated && user ? (
             <>
               <Link
                 href={dashboardHref}
-                className="text-sm text-[#7A6150] hover:text-[#C4622D] transition-colors hidden sm:inline"
+                className="text-sm bg-[#C4622D] text-white px-4 py-2 rounded-md hover:bg-amber-700 transition-colors"
               >
                 Dashboard
               </Link>
-              <span className="text-sm text-[#7A6150] max-w-[140px] truncate">
-                {user.customer?.customer_name ?? user.email}
-              </span>
               <button
                 onClick={() => signOut()}
                 className="text-sm text-[#C4622D] hover:text-amber-800 font-medium"
@@ -52,7 +64,7 @@ export function SiteHeader() {
             <>
               <Link
                 href={ROUTES.registration}
-                className="text-sm text-[#7A6150] hover:text-[#C4622D] transition-colors"
+                className="text-sm bg-[#C4622D] text-white px-4 py-2 rounded-md hover:bg-amber-700 transition-colors"
               >
                 Register
               </Link>
@@ -64,7 +76,7 @@ export function SiteHeader() {
               </Link>
             </>
           )}
-        </nav>
+        </div>
       </div>
     </header>
   );

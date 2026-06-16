@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Pet extends Model
 {
     protected $fillable = [
+        'owner_id',
         'name',
         'species',
         'image',
@@ -18,15 +19,21 @@ class Pet extends Model
         'is_neutered',
         'temperaments',
         'special_needs',
-        'adoption_questions'
+        'adoption_questions',
+        'status',
     ];
 
     protected $casts = [
         'adoption_questions'=> 'array',
         'temperaments' => 'array',
     ];
-    public function applications()
+     public function applications()
     {
         return $this->hasMany(Application::class);
+    }
+
+    public function owner()
+    {
+        return $this->belongsTo(User::class, 'owner_id');
     }
 }
