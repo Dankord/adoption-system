@@ -48,10 +48,10 @@ export default function CustomerDashboardPage() {
         </div>
 
         <div className="flex gap-2 mb-8">
-          <CustomerCard />
-          <CustomerCard />
-          <CustomerCard />
-          <CustomerCard />
+          <CustomerCard num={3} title={"Applications"} />
+          <CustomerCard num={3} title={"Under Review"} />
+          <CustomerCard num={3} title={"Approved"} />
+          <CustomerCard num={3} title={"Care Reminders"} />
         </div>
 
         <MenuBar activeTab={activeTab} onTabChange={setActiveTab} />
