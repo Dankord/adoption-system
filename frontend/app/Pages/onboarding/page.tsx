@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
-import { ROUTES, defaultAuthenticatedPath } from "@/lib/routes";
+import { ROUTES, defaultAuthenticatedPath, isProfileComplete } from "@/lib/routes";
 import api from "@/lib/api";
 import { SiteHeader } from "@/components/site-header";
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -131,7 +131,12 @@ export default function OnboardingPage() {
         },
       });
       await refreshUser();
-      router.replace(defaultAuthenticatedPath(user?.role, true));
+      router.replace(
+        defaultAuthenticatedPath(
+          user?.role,
+          isProfileComplete(user?.role, user?.profile_completed_at),
+        ),
+      );
     } catch {
       toast.error("Could not save your profile. Please try again.");
     }

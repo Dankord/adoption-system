@@ -3,7 +3,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import axios from "axios";
 import api from "@/lib/api";
-import { ROUTES, UserRole } from "@/lib/routes";
+import { ROUTES, UserRole, normalizeRole } from "@/lib/routes";
 
 export interface Customer {
   id: number;
@@ -39,6 +39,13 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+function normalizeUser(user: User): User {
+  return {
+    ...user,
+    role: normalizeRole(user.role),
+  };
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -50,7 +57,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       try {
         const res = await api.get("/user");
         if (mounted) {
-          setUser(res.data.user);
+          setUser(normalizeUser(res.data.user));
         }
       } catch (err) {
         if (
@@ -78,8 +85,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signIn = async (email: string, password: string) => {
     const res = await api.post("/login", { email, password });
-    setUser(res.data.user);
-    return res.data.user as User;
+    const user = normalizeUser(res.data.user as User);
+    setUser(user);
+    return user;
   };
 
   const signUp = async (email: string, password: string) => {
@@ -97,7 +105,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const refreshUser = async () => {
     const res = await api.get("/user");
-    setUser(res.data.user);
+    setUser(normalizeUser(res.data.user));
   };
 
   return (

@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { Dog, Eye, EyeOff, ArrowLeft } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { ROUTES } from "@/lib/routes";
+import { useRouter, useSearchParams } from "next/navigation";
+import { ROUTES, signinWithCallback } from "@/lib/routes";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -16,6 +16,7 @@ export default function RegistrationPage() {
   const { signUp } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,7 +30,8 @@ export default function RegistrationPage() {
     setIsLoading(true);
     try {
       await signUp(email, password);
-      router.replace(ROUTES.signin);
+      const callback = searchParams.get("callback");
+      router.replace(callback ? signinWithCallback(callback) : ROUTES.signin);
     } catch (err: unknown) {
       if (err instanceof Error && err.message.includes("422")) {
         setError("Email already in use or invalid data.");
