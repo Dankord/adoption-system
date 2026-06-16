@@ -1,41 +1,24 @@
-import { MapPin, Phone, Mail, Clock, Heart, Facebook, Instagram, Twitter, PawPrint, ArrowRight, ExternalLink } from 'lucide-react';
 import { useState } from 'react';
+import { MapPin, Phone, Mail, Clock, Heart, PawPrint, ArrowRight, ExternalLink } from 'lucide-react';
+import { ROUTES } from '@/lib/routes';
 
 interface FooterProps {
   onNavigate: (page: string) => void;
 }
 
 export function Footer({ onNavigate }: FooterProps) {
-  const [donationAmount, setDonationAmount] = useState<number | null>(500);
-  const [customAmount, setCustomAmount] = useState('');
-  const [donated, setDonated] = useState(false);
-  const [donorName, setDonorName] = useState('');
-
-  const handleDonate = () => {
-    const amount = donationAmount ?? Number(customAmount);
-    if (!amount || amount <= 0) return;
-    setDonated(true);
-    setTimeout(() => setDonated(false), 4000);
-  };
-
-  const presets = [200, 500, 1000, 2500];
-
   return (
-    <footer className="bg-foreground text-primary-foreground">
-
-      {/* Donation + Location strip */}
+    <footer className="bg-[#1A1A1A] text-white">
       <div className="border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 grid lg:grid-cols-2 gap-12">
-
-          {/* Donation */}
           <div>
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center shrink-0">
-                <Heart className="w-5 h-5 text-primary" />
+              <div className="w-10 h-10 rounded-xl bg-[#C4622D]/20 flex items-center justify-center shrink-0">
+                <Heart className="w-5 h-5 text-[#C4622D]" />
               </div>
               <div>
                 <p className="text-xs text-white/50 uppercase tracking-widest">Support Our Mission</p>
-                <h2 className="text-white font-semibold" style={{ fontFamily: "'DM Serif Display', serif", fontSize: '1.4rem' }}>
+                <h2 className="text-white font-semibold" style={{ fontFamily: "var(--font-dm-serif)", fontSize: '1.4rem' }}>
                   Help Us Find More Homes
                 </h2>
               </div>
@@ -43,65 +26,8 @@ export function Footer({ onNavigate }: FooterProps) {
 
             <p className="text-white/60 text-sm leading-relaxed mb-6">
               Every donation directly funds food, veterinary care, vaccinations, and shelter operations for animals waiting for their forever homes. No amount is too small — ₱200 covers a full day of meals for one pet.
-            </p>
+            </p>      
 
-            <div className="space-y-4">
-              {/* Preset amounts */}
-              <div>
-                <p className="text-xs text-white/50 mb-2 uppercase tracking-wide">Select an amount</p>
-                <div className="flex flex-wrap gap-2">
-                  {presets.map(p => (
-                    <button
-                      key={p}
-                      onClick={() => { setDonationAmount(p); setCustomAmount(''); }}
-                      className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${donationAmount === p && !customAmount ? 'bg-primary text-primary-foreground' : 'bg-white/10 text-white hover:bg-white/20'}`}
-                    >
-                      ₱{p.toLocaleString()}
-                    </button>
-                  ))}
-                  <input
-                    type="number"
-                    value={customAmount}
-                    onChange={e => { setCustomAmount(e.target.value); setDonationAmount(null); }}
-                    placeholder="Custom ₱"
-                    className="px-4 py-2 rounded-xl text-sm bg-white/10 text-white placeholder:text-white/40 w-28 focus:outline-none focus:ring-2 focus:ring-primary/50 border border-white/10"
-                  />
-                </div>
-              </div>
-
-              {/* Donor name */}
-              <div>
-                <p className="text-xs text-white/50 mb-2 uppercase tracking-wide">Your name (optional)</p>
-                <input
-                  type="text"
-                  value={donorName}
-                  onChange={e => setDonorName(e.target.value)}
-                  placeholder="e.g., Maria Santos"
-                  className="w-full sm:w-72 px-4 py-2.5 rounded-xl text-sm bg-white/10 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-primary/50 border border-white/10"
-                />
-              </div>
-
-              {donated ? (
-                <div className="flex items-center gap-3 px-5 py-3 bg-accent/20 border border-accent/30 rounded-xl w-fit">
-                  <Heart className="w-5 h-5 text-accent fill-accent" />
-                  <div>
-                    <p className="text-white font-medium text-sm">Thank you{donorName ? `, ${donorName}` : ''}! 🐾</p>
-                    <p className="text-white/60 text-xs">Your generosity makes a real difference.</p>
-                  </div>
-                </div>
-              ) : (
-                <button
-                  onClick={handleDonate}
-                  disabled={!donationAmount && !customAmount}
-                  className="flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-xl text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed"
-                >
-                  <Heart className="w-4 h-4" />
-                  Donate ₱{donationAmount ? donationAmount.toLocaleString() : (customAmount || '—')}
-                </button>
-              )}
-            </div>
-
-            {/* Impact stats */}
             <div className="flex gap-6 mt-8 pt-6 border-t border-white/10">
               {[
                 { value: '47+', label: 'Pets rehomed' },
@@ -109,28 +35,26 @@ export function Footer({ onNavigate }: FooterProps) {
                 { value: '120+', label: 'Donors & counting' },
               ].map(s => (
                 <div key={s.label}>
-                  <p className="text-white font-semibold" style={{ fontFamily: "'DM Serif Display', serif", fontSize: '1.3rem' }}>{s.value}</p>
+                  <p className="text-white font-semibold" style={{ fontFamily: "var(--font-dm-serif)", fontSize: '1.3rem' }}>{s.value}</p>
                   <p className="text-white/50 text-xs">{s.label}</p>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Location */}
           <div>
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-accent/20 flex items-center justify-center shrink-0">
-                <MapPin className="w-5 h-5 text-accent" />
+              <div className="w-10 h-10 rounded-xl bg-[#E8DDD3]/20 flex items-center justify-center shrink-0">
+                <MapPin className="w-5 h-5 text-[#E8DDD3]" />
               </div>
               <div>
                 <p className="text-xs text-white/50 uppercase tracking-widest">Visit Us</p>
-                <h2 className="text-white font-semibold" style={{ fontFamily: "'DM Serif Display', serif", fontSize: '1.4rem' }}>
+                <h2 className="text-white font-semibold" style={{ fontFamily: "var(--font-dm-serif)", fontSize: '1.4rem' }}>
                   Our Location
                 </h2>
               </div>
             </div>
 
-            {/* Map placeholder */}
             <div className="relative rounded-2xl overflow-hidden mb-5 border border-white/10" style={{ height: '180px' }}>
               <img
                 src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=800&h=400&fit=crop&auto=format"
@@ -138,9 +62,9 @@ export function Footer({ onNavigate }: FooterProps) {
                 className="w-full h-full object-cover opacity-60"
               />
               <div className="absolute inset-0 flex items-center justify-center">
-                <div className="bg-foreground/80 backdrop-blur-sm border border-white/20 rounded-xl px-4 py-3 flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0">
-                    <PawPrint className="w-4 h-4 text-primary-foreground" />
+                <div className="bg-[#1A1A1A]/80 backdrop-blur-sm border border-white/20 rounded-xl px-4 py-3 flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-[#C4622D] flex items-center justify-center shrink-0">
+                    <PawPrint className="w-4 h-4 text-white" />
                   </div>
                   <div>
                     <p className="text-white text-sm font-medium">Paws & Hearts Center</p>
@@ -161,22 +85,22 @@ export function Footer({ onNavigate }: FooterProps) {
             <div className="space-y-3">
               {[
                 {
-                  icon: <MapPin className="w-4 h-4 text-accent shrink-0" />,
+                  icon: <MapPin className="w-4 h-4 text-[#E8DDD3] shrink-0" />,
                   label: 'Address',
                   value: '24 Maliksi Street, Brgy. Batasan Hills\nQuezon City, Metro Manila 1126',
                 },
                 {
-                  icon: <Phone className="w-4 h-4 text-accent shrink-0" />,
+                  icon: <Phone className="w-4 h-4 text-[#E8DDD3] shrink-0" />,
                   label: 'Phone',
                   value: '+63 2 8123 4567\n+63 917 888 2345 (Mobile)',
                 },
                 {
-                  icon: <Mail className="w-4 h-4 text-accent shrink-0" />,
+                  icon: <Mail className="w-4 h-4 text-[#E8DDD3] shrink-0" />,
                   label: 'Email',
                   value: 'adopt@pawsandhearts.ph\ndonations@pawsandhearts.ph',
                 },
                 {
-                  icon: <Clock className="w-4 h-4 text-accent shrink-0" />,
+                  icon: <Clock className="w-4 h-4 text-[#E8DDD3] shrink-0" />,
                   label: 'Open Hours',
                   value: 'Mon – Sat: 9:00 AM – 5:00 PM\nSun: 10:00 AM – 3:00 PM',
                 },
@@ -196,30 +120,18 @@ export function Footer({ onNavigate }: FooterProps) {
         </div>
       </div>
 
-      {/* Footer nav */}
       <div className="border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
           <div>
             <div className="flex items-center gap-2.5 mb-4">
-              <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
-                <PawPrint className="w-4 h-4 text-primary-foreground" />
+              <div className="w-8 h-8 rounded-full bg-[#C4622D] flex items-center justify-center">
+                <PawPrint className="w-4 h-4 text-white" />
               </div>
-              <span className="text-white font-semibold" style={{ fontFamily: "'DM Serif Display', serif" }}>Paws & Hearts</span>
+              <span className="text-white font-semibold" style={{ fontFamily: "var(--font-dm-serif)" }}>Paws & Hearts</span>
             </div>
             <p className="text-white/50 text-xs leading-relaxed mb-4">
               A community adoption platform connecting loving families with animals in need since 2022.
             </p>
-            <div className="flex gap-2">
-              {[
-                { icon: <Facebook className="w-4 h-4" />, href: '#' },
-                { icon: <Instagram className="w-4 h-4" />, href: '#' },
-                { icon: <Twitter className="w-4 h-4" />, href: '#' },
-              ].map((s, i) => (
-                <a key={i} href={s.href} className="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/60 hover:text-white transition-colors">
-                  {s.icon}
-                </a>
-              ))}
-            </div>
           </div>
 
           <div>
@@ -229,7 +141,7 @@ export function Footer({ onNavigate }: FooterProps) {
                 { label: 'Browse All Pets', page: 'home' },
                 { label: 'How It Works', page: 'how-it-works' },
                 { label: 'Create Account', page: 'register' },
-                { label: 'Sign In', page: 'login' },
+                { label: 'Sign In', page: 'sign-in' },
               ].map(link => (
                 <li key={link.label}>
                   <button onClick={() => onNavigate(link.page)} className="text-white/60 hover:text-white text-sm transition-colors flex items-center gap-1.5 group">
@@ -268,9 +180,9 @@ export function Footer({ onNavigate }: FooterProps) {
               <input
                 type="email"
                 placeholder="your@email.com"
-                className="w-full px-3 py-2.5 rounded-xl text-sm bg-white/10 text-white placeholder:text-white/30 border border-white/10 focus:outline-none focus:ring-2 focus:ring-primary/50"
+                className="w-full px-3 py-2.5 rounded-xl text-sm bg-white/10 text-white placeholder:text-white/30 border border-white/10 focus:outline-none focus:ring-2 focus:ring-[#C4622D]/50"
               />
-              <button className="w-full py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity">
+              <button className="w-full py-2.5 rounded-xl bg-[#C4622D] text-white text-sm font-medium hover:opacity-90 transition-opacity">
                 Subscribe
               </button>
             </div>
@@ -278,7 +190,6 @@ export function Footer({ onNavigate }: FooterProps) {
         </div>
       </div>
 
-      {/* Bottom bar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
         <p className="text-white/30 text-xs">© 2026 Paws & Hearts Adoption Center. All rights reserved.</p>
         <div className="flex gap-5">
@@ -287,7 +198,6 @@ export function Footer({ onNavigate }: FooterProps) {
           ))}
         </div>
       </div>
-
     </footer>
   );
 }

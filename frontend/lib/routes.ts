@@ -5,6 +5,7 @@ export const ROUTES = {
   signin: "/Pages/signin",
   registration: "/Pages/signin/auth/registration",
   onboarding: "/Pages/onboarding",
+  howItWorks: "/how-it-works",
   customerDashboard: "/Pages/customer/dashboard",
   ownerDashboard: "/Pages/owner/dashboard",
   adminDashboard: "/Pages/admin/dashboard",
@@ -14,10 +15,14 @@ export const ROUTES = {
 export const GUEST_PATHS = [ROUTES.signin, ROUTES.registration] as const;
 
 const ROLE_PREFIXES: Record<UserRole, string> = {
-  customer: "/Pages/customer",
-  owner: "/Pages/owner",
-  admin: "/Pages/admin",
+  customer: "/pages/customer",
+  owner: "/pages/owner",
+  admin: "/pages/admin",
 };
+
+export function petDetailPath(id: number | string): string {
+  return `/pet/${id}`;
+}
 
 export function isGuestPath(pathname: string): boolean {
   return GUEST_PATHS.some(
@@ -30,9 +35,10 @@ export function isProtectedPath(pathname: string): boolean {
   return pathname.startsWith("/Pages") && !isGuestPath(pathname);
 }
 
-export function normalizeRole(role: string | undefined): UserRole {
-  if (role === "owner" || role === "admin") {
-    return role;
+export function normalizeRole(role: string | undefined | null): UserRole {
+  const normalized = role?.trim().toLowerCase();
+  if (normalized === "owner" || normalized === "admin") {
+    return normalized;
   }
   return "customer";
 }
@@ -46,6 +52,17 @@ export function roleDashboardPath(role: string | undefined): string {
     default:
       return ROUTES.customerDashboard;
   }
+}
+
+/** Owner and admin never go through customer onboarding. */
+export function isProfileComplete(
+  role: string | undefined,
+  profileCompletedAt: string | null | undefined,
+): boolean {
+  if (normalizeRole(role) !== "customer") {
+    return true;
+  }
+  return Boolean(profileCompletedAt);
 }
 
 /** Only customers must complete onboarding before accessing the app. */
@@ -70,21 +87,27 @@ export function signinWithCallback(callback: string): string {
   return `${ROUTES.signin}?callback=${encodeURIComponent(callback)}`;
 }
 
+export function registrationWithCallback(callback: string): string {
+  return `${ROUTES.registration}?callback=${encodeURIComponent(callback)}`;
+}
+
 export function canAccessPath(pathname: string, role: string | undefined): boolean {
   const normalizedRole = normalizeRole(role);
+  const path = pathname.toLowerCase();
 
-  if (pathname === ROUTES.onboarding) {
+  if (path === ROUTES.onboarding.toLowerCase()) {
     return normalizedRole === "customer";
   }
 
   const allowedPrefix = ROLE_PREFIXES[normalizedRole];
-  return pathname === allowedPrefix || pathname.startsWith(`${allowedPrefix}/`);
+  return path === allowedPrefix || path.startsWith(`${allowedPrefix}/`);
 }
 
 export function isRoleScopedPath(pathname: string): boolean {
+  const path = pathname.toLowerCase();
   return (
-    pathname.startsWith("/Pages/customer") ||
-    pathname.startsWith("/Pages/owner") ||
-    pathname.startsWith("/Pages/admin")
+    path.startsWith("/pages/customer") ||
+    path.startsWith("/pages/owner") ||
+    path.startsWith("/pages/admin")
   );
 }

@@ -6,6 +6,7 @@ import {
   canAccessPath,
   defaultAuthenticatedPath,
   isGuestPath,
+  isProfileComplete,
   requiresOnboarding,
   signinWithCallback,
 } from "@/lib/routes";
@@ -34,7 +35,7 @@ function resolveAccess(
   }
 
   const onGuestPage = isGuestPath(pathname);
-  const onOnboarding = pathname === ROUTES.onboarding;
+  const onOnboarding = pathname.toLowerCase() === ROUTES.onboarding.toLowerCase();
   const needsOnboarding = requiresOnboarding(role, profileComplete);
 
   if (!isAuthenticated) {
@@ -65,8 +66,8 @@ export function AuthGuard({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
 
-  const profileComplete = Boolean(user?.profile_completed_at);
   const role = user?.role;
+  const profileComplete = isProfileComplete(role, user?.profile_completed_at);
 
   const access = useMemo(
     () =>

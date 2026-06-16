@@ -47,7 +47,7 @@ class AuthController extends Controller
         $token = $user->createToken('spa')->plainTextToken;
 
         return response()->json([
-            'user' => $user,
+            'user' => $user->fresh(),
             'token' => $token,
         ]);
     }
@@ -67,20 +67,4 @@ class AuthController extends Controller
             'user' => $request->user()->load('customer'),
         ]);
     }
-
-    // public function updateProfile(Request $request): JsonResponse
-    // {
-    //     $data = $request->validate([
-    //         'name' => ['required', 'string', 'max:255'],
-    //     ]);
-
-    //     $user = $request->user();
-    //     $user->fill($data);
-    //     $user->profile_completed_at = now();
-    //     $user->save();
-
-    //     return response()->json([
-    //         'user' => $user,
-    //     ]);
-    // }
 }

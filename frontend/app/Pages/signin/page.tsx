@@ -6,6 +6,7 @@ import {
   ROUTES,
   canAccessPath,
   defaultAuthenticatedPath,
+  isProfileComplete,
   isProtectedPath,
 } from "@/lib/routes";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -15,17 +16,19 @@ import Link from "next/link";
 
 
 function resolvePostLoginPath(callback: string | null, user: User): string {
-  if (
-    callback &&
-    isProtectedPath(callback) &&
-    canAccessPath(callback, user.role)
-  ) {
-    return callback;
+  if (callback) {
+    const isPublicPetPage = callback.startsWith("/pet/");
+    const isAllowedProtectedPath =
+      isProtectedPath(callback) && canAccessPath(callback, user.role);
+
+    if (isPublicPetPage || isAllowedProtectedPath) {
+      return callback;
+    }
   }
 
   return defaultAuthenticatedPath(
     user.role,
-    Boolean(user.profile_completed_at),
+    isProfileComplete(user.role, user.profile_completed_at),
   );
 }
 

@@ -1,14 +1,13 @@
 "use client";
 
+import { SiteHeader } from '@/components/site-header';
 import { Search, UserPlus, ClipboardList, Shield, MessageSquare, Home, Bell, Clock, Users, CheckCircle2, ArrowRight } from 'lucide-react';
+import { ROUTES } from '@/lib/routes';
 
-interface HowItWorksProps {
-  onNavigate: (page: string) => void;
-}
-
-export function HowItWorks({ onNavigate }: HowItWorksProps) {
+function HowItWorksPage({ onNavigate }: { onNavigate: (page: string) => void }) {
   return (
     <div className="min-h-screen bg-[#FDF6EE]">
+      <SiteHeader />
       <div className="bg-[#FFFAF4] border-b border-[#dabcac] py-14 lg:py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <span className="inline-block px-3 py-1 rounded-full bg-[#C4622D]/10 text-[#C4622D] text-xs font-medium mb-4">
@@ -255,5 +254,20 @@ export function HowItWorks({ onNavigate }: HowItWorksProps) {
 
       </div>
     </div>
+  );
+}
+
+export default function HowItWorks() {
+  const handleNavigate = (page: string) => {
+    if (page === 'home') {
+      window.location.href = ROUTES.home;
+    }
+    else if (page === 'register') {
+      window.location.href = ROUTES.registration;
+    }
+  };
+
+  return (
+    <HowItWorksPage onNavigate={handleNavigate} />
   );
 }
