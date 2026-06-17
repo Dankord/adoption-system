@@ -46,10 +46,10 @@ export default function OwnerDashboardPage() {
         </div>
 
         <div className="flex gap-2 mb-8">
-          <OwnerCards num={8} title={"Listed Pets"} />
-          <OwnerCards num={3} title={"Pending Review"} />
-          <OwnerCards num={2} title={"Adopted This Month"} />
-          <OwnerCards num={42} title={"All-Time Adoptions"} />
+          <OwnerCards type="pets_count" title={"Listed Pets"} />
+          <OwnerCards type="pending_count" title={"Pending Review"} />
+          <OwnerCards type="adopted_this_month" title={"Adopted This Month"} />
+          <OwnerCards type="all_time_adoptions" title={"All-Time Adoptions"} />
         </div>
 
         <MenuBar activeTab={activeTab} onTabChange={setActiveTab} />

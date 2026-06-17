@@ -45,6 +45,9 @@ export interface Pet {
   temperaments: string[];
   adoption_questions: Array<{ question: string }>;
   created_at?: string;
+  housing_preference?: string | null;
+  good_with_other_pets?: boolean | null;
+  required_experience?: string | null;
 }
 
 export interface AddPetInput {
@@ -61,6 +64,9 @@ export interface AddPetInput {
   temperament: string[];
   adoptionQuestions: Array<{ question: string }>;
   image?: string;
+  housingPreference?: string;
+  goodWithOtherPets?: boolean;
+  requiredExperience?: string;
 }
 
 export interface EditPetInput {
@@ -78,6 +84,9 @@ export interface EditPetInput {
   temperament: string[];
   adoptionQuestions: Array<{ question: string }>;
   image?: string;
+  housingPreference?: string;
+  goodWithOtherPets?: boolean;
+  requiredExperience?: string;
 }
 
 export interface ApplicationAnswer {
@@ -114,6 +123,14 @@ interface AuthContextType {
   deletePet: (id: number) => Promise<void>;
   getApplications: () => Promise<OwnerApplication[]>;
   updateApplication: (id: number, status: string) => Promise<void>;
+  getDashboardStats: () => Promise<Record<string, unknown>>;
+  getRecommendations: () => Promise<Array<Pet & { match_score: number; match_details: string[]; owner_name: string }>>;
+  getOwnersDashboardStats: () => Promise<{
+    pet_status_breakdown: Record<string, number>;
+    application_status: Record<string, number>;
+    key_metrics: Record<string, number>;
+    species_distribution: Record<string, number>;
+  }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -231,6 +248,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       adoption_questions: data.adoptionQuestions,
       status: "available",
       image: imageUrl,
+      housing_preference: data.housingPreference || null,
+      good_with_other_pets: data.goodWithOtherPets ?? null,
+      required_experience: data.requiredExperience || null,
     });
 
     return res.data.pet as Pet;
@@ -261,6 +281,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       adoption_questions: data.adoptionQuestions,
       status: data.status === "Available" ? "available" : data.status === "Reserved" ? "reserved" : data.status === "Adopted" ? "adopted" : "under_review",
       image: imageUrl,
+      housing_preference: data.housingPreference || null,
+      good_with_other_pets: data.goodWithOtherPets ?? null,
+      required_experience: data.requiredExperience || null,
     });
 
     return res.data.pet as Pet;
@@ -303,6 +326,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await api.put(`/applications/${id}`, { status });
   };
 
+  const getDashboardStats = async (): Promise<Record<string, unknown>> => {
+    const res = await api.get('/dashboard-stats');
+    return res.data.data as Record<string, unknown>;
+  };
+
+  const getRecommendations = async (): Promise<Array<Pet & { match_score: number; match_details: string[]; owner_name: string }>> => {
+    const res = await api.get('/recommendations');
+    return res.data.pets as Array<Pet & { match_score: number; match_details: string[]; owner_name: string }>;
+  };
+
+  const getOwnersDashboardStats = async (): Promise<{
+    pet_status_breakdown: Record<string, number>;
+    application_status: Record<string, number>;
+    key_metrics: Record<string, number>;
+    species_distribution: Record<string, number>;
+  }> => {
+    const res = await api.get('/dashboard-owners-stats');
+    return res.data as {
+      pet_status_breakdown: Record<string, number>;
+      application_status: Record<string, number>;
+      key_metrics: Record<string, number>;
+      species_distribution: Record<string, number>;
+    };
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -321,6 +369,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         deletePet,
         getApplications,
         updateApplication,
+        getDashboardStats,
+        getRecommendations,
+        getOwnersDashboardStats,
       }}
     >
       {children}

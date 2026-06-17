@@ -124,7 +124,6 @@ export default function OwnerApplications() {
               >
                 <div className="p-5">
                   <div className="flex items-start justify-between gap-4">
-                    {/* Left: Applicant Info */}
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-3">
                         <div className="w-10 h-10 rounded-full bg-[#C4622D]/10 flex items-center justify-center">
@@ -145,7 +144,6 @@ export default function OwnerApplications() {
                       <p className="text-xs text-[#7A6150]/60">{formatDate(app.submitted_at)}</p>
                     </div>
 
-                    {/* Right: Status + Actions */}
                     <div className="flex flex-col items-end gap-3">
                       <span className={`px-3 py-1 rounded-full border text-xs font-medium ${statusClass}`}>
                         {STATUS_LABELS[app.status] ?? app.status}
@@ -178,7 +176,6 @@ export default function OwnerApplications() {
                     </div>
                   </div>
 
-                  {/* Expanded Answers */}
                   {isExpanded && (
                     <div className="mt-4 pt-4 border-t border-[#dabcac] space-y-3">
                       {app.answers.length === 0 ? (

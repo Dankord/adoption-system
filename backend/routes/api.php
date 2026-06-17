@@ -31,8 +31,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/pets', [PetController::class, 'store']);
     Route::put('/pets/{id}', [PetController::class, 'update']);
     Route::delete('/pets/{id}', [PetController::class, 'destroy']);
+    Route::get('/recommendations', [PetController::class, 'recommendations']);
 
     Route::post('/application', [ApplicationController::class, 'store']);
     Route::get('/applications', [ApplicationController::class, 'index']);
     Route::put('/applications/{id}', [ApplicationController::class, 'update']);
+    Route::get('/dashboard-stats', [ApplicationController::class, 'stats']);
+    Route::get('/dashboard-owners-stats', [ApplicationController::class, 'ownersStats']);
 });
