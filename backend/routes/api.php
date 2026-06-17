@@ -39,6 +39,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/applications/{id}', [ApplicationController::class, 'update']);
     Route::get('/dashboard-stats', [ApplicationController::class, 'stats']);
     Route::get('/dashboard-owners-stats', [ApplicationController::class, 'ownersStats']);
+    Route::get('/care-reminders', [ApplicationController::class, 'getCareReminders']);
+    Route::post('/care-reminders/{id}/survey', [ApplicationController::class, 'submitSurvey']);
 
     Route::get('/conversations', [ConversationController::class, 'index']);
     Route::post('/conversations', [ConversationController::class, 'store']);

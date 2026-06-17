@@ -136,6 +136,8 @@ interface AuthContextType {
   sendMessage: (conversationId: number, body: string) => Promise<void>;
   getUnreadCount: () => Promise<number>;
   startConversation: (ownerId: number, petId?: number) => Promise<void>;
+  getCareReminders: () => Promise<CareReminder[]>;
+  submitSurvey: (reminderId: number, responses: Record<string, string>) => Promise<void>;
 }
 
 export interface Message {
@@ -165,6 +167,20 @@ export interface ConversationItem {
   owner: { id: number; customer: string | null; customer_name: string | null };
   customer: { id: number; customer: string | null; customer_name: string | null };
   pet: { id: number; name: string | null } | null;
+}
+
+export interface CareReminder {
+  id: number;
+  application_id: number;
+  reminder_type: string;
+  survey_type: string;
+  status: string;
+  scheduled_at: string;
+  completed_at: string | null;
+  pet_name: string;
+  pet_species: string;
+  pet_breed: string;
+  is_overdue: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -408,6 +424,15 @@ const startConversation = async (ownerId: number, petId?: number): Promise<void>
   await api.post("/conversations", { owner_id: ownerId, pet_id: petId });
 };
 
+const getCareReminders = async (): Promise<CareReminder[]> => {
+  const res = await api.get("/care-reminders");
+  return res.data.reminders as CareReminder[];
+};
+
+const submitSurvey = async (reminderId: number, responses: Record<string, string>): Promise<void> => {
+  await api.post(`/care-reminders/${reminderId}/survey`, { responses });
+};
+
   return (
     <AuthContext.Provider
       value={{
@@ -433,7 +458,9 @@ const startConversation = async (ownerId: number, petId?: number): Promise<void>
         getMessages,
         sendMessage,
         getUnreadCount,
-        startConversation
+        startConversation,
+        getCareReminders,
+        submitSurvey
       }}
     >
       {children}
