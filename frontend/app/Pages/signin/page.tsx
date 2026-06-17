@@ -115,7 +115,7 @@ function SignInForm() {
               </div>
               <div className="ml-0 text-start pb-2 w-full">
                 <div className="text-xl text-gray-900 font-semibold">
-                  Paws & Hearts
+                  Adoptify
                 </div>
               </div>
             </div>
