@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, CheckCircle2, XCircle, Heart, Scale } from "lucide-react";
+import { ArrowLeft, CheckCircle2, XCircle, Heart, Scale, MessageCircle } from "lucide-react";
 import {
   ROUTES,
   registrationWithCallback,
@@ -35,6 +35,8 @@ interface PetDetailProps {
   isAuthenticated?: boolean;
   canApply?: boolean;
   onApply?: () => void;
+  ownerId?: number | null;
+  onMessageOwner?: () => void;  
 }
 
 const STATUS_STYLES: Record<string, { bg: string; text: string; dot: string }> = {
@@ -49,18 +51,22 @@ function ApplySection({
   isAuthenticated,
   canApply,
   onApply,
+  ownerId,
+  onMessageOwner,
 }: PetDetailProps) {
   const petPath = `/pet/${pet.id}`;
   const isAvailable = pet.status === "Available";
 
   if (!isAvailable) {
     return (
-      <button
-        disabled
-        className="w-full py-3 rounded-xl bg-[#C4622D] text-white font-medium text-sm opacity-50 cursor-not-allowed"
-      >
-        Not Available for Adoption
-      </button>
+      <div className="space-y-2">
+        <button
+          disabled
+          className="w-full py-3 rounded-xl bg-[#C4622D] text-white font-medium text-sm opacity-50 cursor-not-allowed"
+        >
+          Not Available for Adoption
+        </button>
+      </div>
     );
   }
 
@@ -85,22 +91,35 @@ function ApplySection({
 
   if (!canApply) {
     return (
-      <Link
-        href={ROUTES.onboarding}
-        className="w-full py-3 rounded-xl bg-[#C4622D] text-white font-medium text-sm hover:opacity-90 transition-opacity flex items-center justify-center"
-      >
-        Complete Profile to Apply
-      </Link>
+      <div className="space-y-2">
+        <Link
+          href={ROUTES.onboarding}
+          className="w-full py-3 rounded-xl bg-[#C4622D] text-white font-medium text-sm hover:opacity-90 transition-opacity flex items-center justify-center"
+        >
+          Complete Profile to Apply
+        </Link>
+      </div>
     );
   }
 
   return (
-    <button
-      onClick={onApply}
-      className="w-full py-3 rounded-xl bg-[#C4622D] text-white font-medium text-sm hover:opacity-90 transition-opacity"
-    >
-      Apply for Adoption
-    </button>
+    <div className="space-y-2">
+      <button
+        onClick={onApply}
+        className="w-full py-3 rounded-xl bg-[#C4622D] text-white font-medium text-sm hover:opacity-90 transition-opacity"
+      >
+        Apply for Adoption
+      </button>
+      {ownerId && (
+        <button
+          onClick={onMessageOwner}
+          className="w-full py-3 rounded-xl border border-[#C4622D] text-[#C4622D] font-medium text-sm hover:bg-[#C4622D]/5 transition-opacity flex items-center justify-center gap-2"
+        >
+          <MessageCircle className="w-4 h-4" />
+          Message Owner
+        </button>
+      )}
+    </div>
   );
 }
 
@@ -109,6 +128,8 @@ export function PetDetail({
   isAuthenticated = false,
   canApply = false,
   onApply,
+  ownerId = null,
+  onMessageOwner,
 }: PetDetailProps) {
   const ss = STATUS_STYLES[pet.status] ?? STATUS_STYLES["Available"];
 
@@ -275,6 +296,8 @@ export function PetDetail({
                 isAuthenticated={isAuthenticated}
                 canApply={canApply}
                 onApply={onApply}
+                ownerId={ownerId}
+                onMessageOwner={onMessageOwner}
               />
             </div>
           </div>

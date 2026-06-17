@@ -17,7 +17,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     });
 
     if (!res.ok) {
-      return NextResponse.error({ status: res.status });
+      return new NextResponse(null, { status: res.status });
     }
 
     const buffer = await res.arrayBuffer();
@@ -31,6 +31,6 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       },
     });
   } catch {
-    return NextResponse.error({ status: 502 });
+    return new NextResponse(null, { status: 502 });
   }
 }

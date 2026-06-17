@@ -8,10 +8,12 @@ import { PetDetail } from "@/app/components/landing/PetDetail";
 import { ApplyModal } from "@/app/components/landing/ApplyModal";
 import { PetService, mapApiPetToDisplay } from "@/lib/pet-service";
 import { isProfileComplete, normalizeRole } from "@/lib/routes";
+import api from "@/lib/api";
+import { toast } from "sonner";
 
 export default function PetDetailPage() {
   const { id } = useParams();
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, startConversation } = useAuth();
   const petId = Number(id);
   const [pet, setPet] = useState<ReturnType<typeof mapApiPetToDisplay> | null>(null);
   const [loading, setLoading] = useState(true);
@@ -42,8 +44,33 @@ export default function PetDetailPage() {
     setIsApplyModalOpen(true);
   };
 
-  const handleApplicationSubmitted = () => {
+  const handleApplicationSubmitted = async () => {
     setPet((prev) => (prev ? { ...prev, status: "Under Review" } : prev));
+    if (pet?.ownerId) {
+      try {
+        await startConversation(pet.ownerId, petId);
+        toast.success("Application submitted! Opening chat with owner...");
+        const role = user?.role || "customer";
+        window.location.href = `/Pages/${role}/dashboard?tab=messages`;
+      } catch {
+        toast.success("Application submitted successfully!");
+        window.location.href = `/Pages/${user?.role || "customer"}/dashboard?tab=messages`;
+      }
+    } else {
+      toast.success("Application submitted successfully!");
+      window.location.href = `/Pages/${user?.role || "customer"}/dashboard?tab=messages`;
+    }
+  };
+
+  const handleMessageOwner = async () => {
+    if (!pet?.ownerId) return;
+    try {
+      await startConversation(pet.ownerId, petId);
+      const role = user?.role || "customer";
+      window.location.href = `/Pages/${role}/dashboard?tab=messages`;
+    } catch {
+      toast.error("Failed to start conversation.");
+    }
   };
 
   if (loading) {
@@ -70,6 +97,8 @@ export default function PetDetailPage() {
         isAuthenticated={isAuthenticated}
         canApply={canApply}
         onApply={handleApply}
+        ownerId={pet.ownerId}
+        onMessageOwner={handleMessageOwner}
       />
       <ApplyModal
         isOpen={isApplyModalOpen}

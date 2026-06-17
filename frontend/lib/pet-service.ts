@@ -2,6 +2,7 @@ import api from "@/lib/api";
 
 export interface ApiPet {
   id: number;
+  owner_id: number | null;
   name: string;
   species: string;
   breed: string;
@@ -21,6 +22,7 @@ export interface ApiPet {
 
 export interface DisplayPet {
   id: number;
+  ownerId: number | null;
   name: string;
   species: string;
   breed: string;
@@ -62,6 +64,7 @@ const STATUS_MAP: Record<string, "Available" | "Under Review" | "Reserved" | "Ad
 export function mapApiPetToDisplay(apiPet: ApiPet): DisplayPet {
   return {
     id: apiPet.id,
+    ownerId: apiPet.owner_id,
     name: apiPet.name,
     species: apiPet.species,
     breed: apiPet.breed,

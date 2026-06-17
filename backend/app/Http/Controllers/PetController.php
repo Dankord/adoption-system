@@ -189,6 +189,7 @@ class PetController extends Controller
     {
         return [
             'id' => $pet->id,
+            'owner_id' => $pet->owner_id,
             'name' => $pet->name,
             'species' => $pet->species,
             'breed' => $pet->breed,
@@ -307,6 +308,7 @@ class PetController extends Controller
 
                 return [
                     'id' => $pet->id,
+                    'owner_id' => $pet->owner_id,
                     'name' => $pet->name,
                     'species' => $pet->species,
                     'breed' => $pet->breed,
