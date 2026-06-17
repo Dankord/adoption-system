@@ -43,6 +43,32 @@ const TEMPERAMENT_OPTIONS = [
   "Loyal",
 ];
 
+const HOUSING_OPTIONS = [
+  "any",
+  "apartment-friendly",
+  "yard_needed",
+  "large_space",
+];
+
+const EXPERIENCE_OPTIONS = [
+  "first_time_friendly",
+  "intermediate",
+  "experienced_only",
+];
+
+const EXPERIENCE_LABELS: Record<string, string> = {
+  first_time_friendly: "First-Time Friendly",
+  intermediate: "Intermediate",
+  experienced_only: "Experienced Only",
+};
+
+const HOUSING_LABELS: Record<string, string> = {
+  any: "Any Housing",
+  "apartment-friendly": "Apartment Friendly",
+  yard_needed: "Yard Needed",
+  large_space: "Large Space",
+};
+
 const questionItemSchema = z.object({
   question: z.string().min(1, "Question cannot be empty."),
 });
@@ -66,6 +92,9 @@ export const formSchema = z.object({
   description: z.string(),
   temperament: z.array(z.string()).min(1, "Select at least one temperament."),
   adoptionQuestions: z.array(questionItemSchema).min(0),
+  housingPreference: z.string().optional().nullable(),
+  goodWithOtherPets: z.boolean().optional().nullable(),
+  requiredExperience: z.string().optional().nullable(),
 });
 
 export type FormValues = z.infer<typeof formSchema>;
@@ -99,6 +128,9 @@ export function AddPetModal({ isOpen, onClose, onPetAdded }: AddPetModalProps) {
       description: "",
       temperament: [],
       adoptionQuestions: [],
+      housingPreference: null,
+      goodWithOtherPets: null,
+      requiredExperience: null,
     },
   });
 
@@ -144,6 +176,9 @@ export function AddPetModal({ isOpen, onClose, onPetAdded }: AddPetModalProps) {
           description: data.description,
           temperament: data.temperament,
           adoptionQuestions: data.adoptionQuestions,
+          housingPreference: data.housingPreference || undefined,
+          goodWithOtherPets: data.goodWithOtherPets || undefined,
+          requiredExperience: data.requiredExperience || undefined,
         }, imageFile);
 
       form.reset();
@@ -479,6 +514,87 @@ export function AddPetModal({ isOpen, onClose, onPetAdded }: AddPetModalProps) {
                         <FieldError errors={[fieldState.error]} />
                       ) : null}
                     </>
+                  )}
+                />
+              </Field>
+
+              <Field>
+                <FieldLabel>Recommended Housing</FieldLabel>
+                <FieldDescription className="text-xs text-[#7A6150]/70 mb-2">
+                  What type of home works best for this pet? (Used for matching)
+                </FieldDescription>
+                <Controller
+                  name="housingPreference"
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      value={field.value ?? undefined}
+                      onValueChange={(value) => field.onChange(value === "null" ? null : value)}
+                    >
+                      <SelectTrigger className="bg-[#F2E8DB]">
+                        <SelectValue placeholder="Select housing preference" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {HOUSING_OPTIONS.map((opt) => (
+                          <SelectItem key={opt} value={opt}>
+                            {HOUSING_LABELS[opt]}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+              </Field>
+
+              <Field>
+                <FieldLabel>Good With Other Pets</FieldLabel>
+                <FieldDescription className="text-xs text-[#7A6150]/70 mb-2">
+                  Can this pet live with other animals? (Used for matching)
+                </FieldDescription>
+                <div className="flex gap-6">
+                  <Controller
+                    name="goodWithOtherPets"
+                    control={control}
+                    render={({ field }) => (
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <Checkbox
+                          checked={field.value === true}
+                          onCheckedChange={(checked) => {
+                            if (checked === true) field.onChange(true);
+                            else if (checked === false) field.onChange(null);
+                          }}
+                        />
+                        <span className="text-sm text-[#7A6150]">Yes, friendly with other pets</span>
+                      </label>
+                    )}
+                  />
+                </div>
+              </Field>
+
+              <Field>
+                <FieldLabel>Experience Level Required</FieldLabel>
+                <FieldDescription className="text-xs text-[#7A6150]/70 mb-2">
+                  What experience level should the adopter have? (Used for matching)
+                </FieldDescription>
+                <Controller
+                  name="requiredExperience"
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      value={field.value ?? undefined}
+                      onValueChange={(value) => field.onChange(value === "null" ? null : value)}
+                    >
+                      <SelectTrigger className="bg-[#F2E8DB]">
+                        <SelectValue placeholder="Select experience level" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {EXPERIENCE_OPTIONS.map((opt) => (
+                          <SelectItem key={opt} value={opt}>
+                            {EXPERIENCE_LABELS[opt]}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   )}
                 />
               </Field>

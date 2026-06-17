@@ -22,6 +22,9 @@ class Pet extends Model
         'adoption_questions',
         'status',
         'description',
+        'housing_preference',
+        'good_with_other_pets',
+        'required_experience',
     ];
 
     protected $casts = [

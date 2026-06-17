@@ -112,6 +112,95 @@ class ApplicationController extends Controller
         ]);
     }
 
+    public function stats(Request $request): JsonResponse
+    {
+        $user = $request->user();
+
+        if ($user->role === 'customer' && $user->customer) {
+            $appId = $user->customer->id;
+            $apps = Application::where('customer_id', $appId)->get();
+
+            $stats = [
+                'customer' => [
+                    'applications_count' => $apps->count(),
+                    'under_review_count' => $apps->where('status', 'under_review')->count(),
+                    'approved_count' => $apps->where('status', 'approved')->count(),
+                    'care_reminders_count' => 0,
+                ],
+            ];
+        } else {
+            $petIds = Pet::where('owner_id', $user->id)->pluck('id');
+            $apps = Application::whereIn('pet_id', $petIds)->get();
+            $pets = Pet::where('owner_id', $user->id)->count();
+
+            $firstDayOfMonth = now()->startOfMonth();
+            $adoptedThisMonth = $apps->where('status', 'completed')->filter(function ($app) use ($firstDayOfMonth) {
+                return $app->completed_at && $app->completed_at->gte($firstDayOfMonth);
+            })->count();
+
+            $stats = [
+                'owner' => [
+                    'pets_count' => $pets,
+                    'pending_count' => $apps->where(function ($q) {
+                        return $q->where('status', 'submitted')->orWhere('status', 'under_review');
+                    })->count(),
+                    'adopted_this_month' => $adoptedThisMonth,
+                    'all_time_adoptions' => $apps->where('status', 'completed')->count(),
+                ],
+            ];
+        }
+
+        return response()->json(['data' => $stats]);
+    }
+
+    public function ownersStats(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        $petIds = Pet::where('owner_id', $user->id)->pluck('id');
+        $pets = Pet::where('owner_id', $user->id)->get();
+        $apps = Application::whereIn('pet_id', $petIds)->get();
+
+        $petStatusBreakdown = [
+            'available' => $pets->where('status', 'available')->count(),
+            'under_review' => $pets->where('status', 'under_review')->count(),
+            'reserved' => $pets->where('status', 'reserved')->count(),
+            'adopted' => $pets->where('status', 'adopted')->count(),
+        ];
+
+        $appStatusBreakdown = [
+            'submitted' => $apps->where('status', 'submitted')->count(),
+            'under_review' => $apps->where('status', 'under_review')->count(),
+            'approved' => $apps->where('status', 'approved')->count(),
+            'reserved' => $apps->where('status', 'reserved')->count(),
+            'rejected' => $apps->where('status', 'rejected')->count(),
+            'cancelled' => $apps->where('status', 'cancelled')->count(),
+            'completed' => $apps->where('status', 'completed')->count(),
+        ];
+
+        $firstDayOfMonth = now()->startOfMonth();
+        $adoptedThisMonth = $apps->where('status', 'completed')->filter(function ($app) use ($firstDayOfMonth) {
+            return $app->completed_at && $app->completed_at->gte($firstDayOfMonth);
+        })->count();
+
+        $totalListed = $pets->count();
+        $pendingApplications = $apps->where(function ($q) {
+            return $q->where('status', 'submitted')->orWhere('status', 'under_review');
+        })->count();
+
+        $speciesDistribution = $pets->groupBy('species')->map(fn($group) => $group->count())->toArray();
+
+        return response()->json([
+            'pet_status_breakdown' => $petStatusBreakdown,
+            'application_status' => $appStatusBreakdown,
+            'key_metrics' => [
+                'adopted_this_month' => $adoptedThisMonth,
+                'total_listed' => $totalListed,
+                'pending_applications' => $pendingApplications,
+            ],
+            'species_distribution' => $speciesDistribution,
+        ]);
+    }
+
     public function update(Request $request, int $id): JsonResponse
     {
         $user = $request->user();

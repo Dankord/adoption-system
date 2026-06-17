@@ -6,7 +6,7 @@ import { SiteHeader } from "@/components/site-header";
 import CustomerCard from "./components/CustomerCards";
 import { MenuBar } from "./components/MenuBar";
 import CustomerMessages from "./components/CustomerMessages";
-import CustomerMyApplication from "./components/CustomerMyApplications";
+import CustomerMyApplications from "./components/CustomerMyApplications";
 import CustomerForYouCard from "./components/CustomerForYouCard";
 import CustomerPetCare from "./components/CustomerPetCare";
 import CustomerProfile from "./components/CustomerProfile";
@@ -24,8 +24,8 @@ export default function CustomerDashboardPage() {
 
   const renderContent = () => {
     switch (activeTab) {
-      case "applications":
-        return <CustomerMyApplication />;
+       case "applications":
+          return <CustomerMyApplications />;
       case "for-you":
         return <CustomerForYouCard />;
       case "messages":
@@ -35,7 +35,7 @@ export default function CustomerDashboardPage() {
       case "profile":
         return <CustomerProfile onEdit={() => setIsEditProfileOpen(true)} />;
       default:
-        return <CustomerMyApplication />;
+          return <CustomerMyApplications />;
     }
   };
 
@@ -53,10 +53,10 @@ export default function CustomerDashboardPage() {
         </div>
 
         <div className="flex gap-2 mb-8">
-          <CustomerCard num={3} title={"Applications"} />
-          <CustomerCard num={3} title={"Under Review"} />
-          <CustomerCard num={3} title={"Approved"} />
-          <CustomerCard num={3} title={"Care Reminders"} />
+          <CustomerCard type="applications_count" title={"Applications"} />
+          <CustomerCard type="under_review_count" title={"Under Review"} />
+          <CustomerCard type="approved_count" title={"Approved"} />
+          <CustomerCard type="care_reminders_count" title={"Care Reminders"} />
         </div>
 
         <MenuBar activeTab={activeTab} onTabChange={setActiveTab} />
