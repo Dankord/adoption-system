@@ -138,6 +138,11 @@ interface AuthContextType {
   startConversation: (ownerId: number, petId?: number) => Promise<void>;
   getCareReminders: () => Promise<CareReminder[]>;
   submitSurvey: (reminderId: number, responses: Record<string, string>) => Promise<void>;
+  getAdminUsers: () => Promise<AdminUser[]>;
+  createAdminUser: (data: { email: string; password: string; name: string; role: string }) => Promise<AdminUser>;
+  updateAdminUser: (id: number, data: Partial<{ email: string; role: string; name: string; profile_completed_at: string | null }>) => Promise<AdminUser>;
+  deleteAdminUser: (id: number) => Promise<void>;
+  getAdminStats: () => Promise<AdminStats>;
 }
 
 export interface Message {
@@ -181,6 +186,36 @@ export interface CareReminder {
   pet_species: string;
   pet_breed: string;
   is_overdue: boolean;
+}
+
+export interface AdminUser {
+  id: number;
+  email: string;
+  role: string;
+  profile_completed_at: string | null;
+  customer_name: string | null;
+  has_customer_profile: boolean;
+  created_at: string;
+  customer?: {
+    housing_type: string;
+    has_space: boolean;
+    previous_owner: boolean;
+    household_number: number;
+    has_pets: boolean;
+    typical_sched: string;
+  };
+}
+
+export interface AdminStats {
+  total_users: number;
+  total_customers: number;
+  total_owners: number;
+  total_pets: number;
+  total_applications: number;
+  total_adoptions: number;
+  pending_applications: number;
+  users_this_week: number;
+  adoptions_this_month: number;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -433,6 +468,30 @@ const submitSurvey = async (reminderId: number, responses: Record<string, string
   await api.post(`/care-reminders/${reminderId}/survey`, { responses });
 };
 
+const getAdminUsers = async (): Promise<AdminUser[]> => {
+  const res = await api.get("/admin/users");
+  return res.data.users as AdminUser[];
+};
+
+const createAdminUser = async (data: { email: string; password: string; name: string; role: string }): Promise<AdminUser> => {
+  const res = await api.post("/admin/users", data); 
+  return res.data.user as AdminUser;
+};
+
+const updateAdminUser = async (id: number, data: Partial<{ email: string; role: string; name: string; profile_completed_at: string | null }>): Promise<AdminUser> => {
+  const res = await api.put(`/admin/users/${id}`, data);
+  return res.data.user as AdminUser;
+};
+
+const deleteAdminUser = async (id: number): Promise<void> => {
+  await api.delete(`/admin/users/${id}`);
+};
+
+const getAdminStats = async (): Promise<AdminStats> => {
+  const res = await api.get("/admin/stats");
+  return res.data as AdminStats;
+};
+
   return (
     <AuthContext.Provider
       value={{
@@ -460,7 +519,12 @@ const submitSurvey = async (reminderId: number, responses: Record<string, string
         getUnreadCount,
         startConversation,
         getCareReminders,
-        submitSurvey
+        submitSurvey,
+        getAdminUsers,
+        createAdminUser,
+        updateAdminUser,
+        deleteAdminUser,
+        getAdminStats
       }}
     >
       {children}
