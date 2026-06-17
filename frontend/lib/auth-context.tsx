@@ -41,6 +41,7 @@ export interface Pet {
   vaccinated: boolean;
   neutered: boolean;
   special_needs?: string | null;
+  description?: string | null;
   temperaments: string[];
   adoption_questions: Array<{ question: string }>;
   created_at?: string;
@@ -56,6 +57,7 @@ export interface AddPetInput {
   vaccinated: boolean;
   neutered: boolean;
   special_needs: string;
+  description: string;
   temperament: string[];
   adoptionQuestions: Array<{ question: string }>;
   image?: string;
@@ -71,6 +73,8 @@ export interface EditPetInput {
   vaccinated: boolean;
   neutered: boolean;
   special_needs: string;
+  status: "Available" | "Under Review" | "Reserved" | "Adopted";
+  description: string;
   temperament: string[];
   adoptionQuestions: Array<{ question: string }>;
   image?: string;
@@ -178,7 +182,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const getPets = async (): Promise<Pet[]> => {
-    const res = await api.get("/pets");
+    const res = await api.get("/owner-pets");
     return res.data.pets as Pet[];
   };
 
@@ -188,10 +192,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (imageFile) {
       const formData = new FormData();
       formData.append("image", imageFile);
-      const uploadRes = await api.post("/pet-image", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      imageUrl = uploadRes.data.url;
+      const uploadRes = await api.post("/pet-image", formData);
+      imageUrl = uploadRes.data.path;
     }
 
     const res = await api.post("/pets", {
@@ -204,9 +206,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       vac_status: data.vaccinated ? "Yes" : "No",
       is_neutered: data.neutered,
       special_needs: data.special_needs || null,
+      description: data.description || null,
       temperaments: data.temperament,
       adoption_questions: data.adoptionQuestions,
-      status: "under_review",
+      status: "available",
       image: imageUrl,
     });
 
@@ -219,10 +222,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (imageFile) {
       const formData = new FormData();
       formData.append("image", imageFile);
-      const uploadRes = await api.post("/pet-image", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      imageUrl = uploadRes.data.url;
+      const uploadRes = await api.post("/pet-image", formData);
+      imageUrl = uploadRes.data.path;
     }
 
     const res = await api.put(`/pets/${id}`, {
@@ -235,6 +236,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       vac_status: data.vaccinated ? "Yes" : "No",
       is_neutered: data.neutered,
       special_needs: data.special_needs || null,
+      description: data.description || null,
       temperaments: data.temperament,
       adoption_questions: data.adoptionQuestions,
       status: data.status === "Available" ? "available" : data.status === "Reserved" ? "reserved" : data.status === "Adopted" ? "adopted" : "under_review",

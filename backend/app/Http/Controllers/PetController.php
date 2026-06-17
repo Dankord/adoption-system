@@ -9,6 +9,32 @@ use App\Models\Pet;
 
 class PetController extends Controller
 {
+    public function publicIndex(Request $request): JsonResponse
+    {
+        $pets = Pet::where('status', 'available')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return response()->json([
+            'pets' => $pets->map(function ($pet) {
+                return $this->formatPet($pet);
+            }),
+        ]);
+    }
+
+    public function publicShow(Request $request, int $id): JsonResponse
+    {
+        $pet = Pet::find($id);
+
+        if (!$pet) {
+            return response()->json(['message' => 'Pet not found'], 404);
+        }
+
+        return response()->json([
+            'pet' => $this->formatPet($pet),
+        ]);
+    }
+
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
@@ -18,23 +44,7 @@ class PetController extends Controller
 
         return response()->json([
             'pets' => $pets->map(function ($pet) {
-                return [
-                    'id' => $pet->id,
-                    'name' => $pet->name,
-                    'species' => $pet->species,
-                    'breed' => $pet->breed,
-                    'age' => $pet->age,
-                    'gender' => $pet->gender,
-                    'status' => ucfirst($pet->status),
-                    'adoption_fee' => $pet->adoption_fee,
-                    'image' => $pet->image ? Storage::url($pet->image) : null,
-                    'vaccinated' => $pet->vac_status === 'Yes' || $pet->vac_status === 'Vaccinated' || $pet->vac_status === 'yes',
-                    'neutered' => (bool) $pet->is_neutered,
-                    'special_needs' => $pet->special_needs,
-                    'temperaments' => $pet->temperaments ?? [],
-                    'adoption_questions' => $pet->adoption_questions ?? [],
-                    'created_at' => $pet->created_at,
-                ];
+                return $this->formatPet($pet);
             }),
         ]);
     }
@@ -55,6 +65,7 @@ class PetController extends Controller
             'adoption_questions' => 'nullable|array',
             'status' => 'nullable|in:available,under_review,reserved,adopted',
             'image' => 'nullable|string',
+            'description' => 'nullable|string',
         ]);
 
         $user = $request->user();
@@ -74,6 +85,7 @@ class PetController extends Controller
             'adoption_questions' => $validated['adoption_questions'] ?? [],
             'status' => $validated['status'] ?? 'under_review',
             'image' => $validated['image'] ?? null,
+            'description' => $validated['description'] ?? null,
         ]);
 
         return response()->json([
@@ -118,6 +130,7 @@ class PetController extends Controller
             'adoption_questions' => 'nullable|array',
             'status' => 'nullable|in:available,under_review,reserved,adopted',
             'image' => 'nullable|string',
+            'description' => 'nullable|string',
         ]);
 
         $pet->update([
@@ -134,6 +147,7 @@ class PetController extends Controller
             'adoption_questions' => $validated['adoption_questions'] ?? [],
             'status' => $validated['status'] ?? 'under_review',
             'image' => $validated['image'] ?? $pet->image,
+            'description' => $validated['description'] ?? $pet->description,
         ]);
 
         return response()->json([
@@ -176,6 +190,7 @@ class PetController extends Controller
             'special_needs' => $pet->special_needs,
             'temperaments' => $pet->temperaments ?? [],
             'adoption_questions' => $pet->adoption_questions ?? [],
+            'description' => $pet->description,
             'created_at' => $pet->created_at,
         ];
     }

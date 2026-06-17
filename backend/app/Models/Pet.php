@@ -21,11 +21,13 @@ class Pet extends Model
         'special_needs',
         'adoption_questions',
         'status',
+        'description',
     ];
 
     protected $casts = [
-        'adoption_questions'=> 'array',
+        'adoption_questions' => 'array',
         'temperaments' => 'array',
+        'is_neutered' => 'boolean',
     ];
      public function applications()
     {

@@ -38,11 +38,6 @@ export function OwnerPetCard({ pet, onEdit, onDelete, onView }: OwnerPetCardProp
   return (
     <div className="group bg-white rounded-2xl border border-[#dabcac] overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 flex flex-col">
       <div className="relative overflow-hidden h-52">
-        <div className="w-full h-full bg-[#f5ebe0] flex items-center justify-center">
-          <span className="text-5xl opacity-30">
-            {pet.species === "Dog" ? "🐕" : pet.species === "Cat" ? "🐈" : "🐾"}
-          </span>
-        </div>
         <img
           src={pet.image}
           alt={pet.name}
