@@ -7,8 +7,9 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { PawPrint, Heart, MapPin, Users } from "lucide-react";
+import { PawPrint, Heart, MapPin, Users, MessageCircle } from "lucide-react";
 import { ApplyModal } from "@/app/components/landing/ApplyModal";
+import { toast } from "sonner";
 
 const HOUSING_LABELS: Record<string, string> = {
   any: "Any Housing",
@@ -25,6 +26,7 @@ const HOUSING_LABELS: Record<string, string> = {
 
 interface RecommendedPet {
   id: number;
+  owner_id: number | null;
   name: string;
   species: string;
   breed: string;
@@ -35,31 +37,31 @@ interface RecommendedPet {
   image: string | null;
   vaccinated: boolean;
   neutered: boolean;
-  special_needs: string | null;
+  special_needs: string | null | undefined;
   temperaments: string[];
   adoption_questions: Array<{ question: string }>;
-  description: string | null;
-  housing_preference: string | null;
-  good_with_other_pets: boolean | null;
-  required_experience: string | null;
+  description: string | null | undefined;
+  housing_preference: string | null | undefined;
+  good_with_other_pets: boolean | null | undefined;
+  required_experience: string | null | undefined;
   match_score: number;
   match_details: string[];
   owner_name: string;
 }
 
 const CustomerForYouCard = () => {
-  const { getRecommendations, user } = useAuth();
+  const { getRecommendations, user, startConversation } = useAuth();
   const [pets, setPets] = useState<RecommendedPet[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [appliedPetIds, setAppliedPetIds] = useState<Set<number>>(new Set());
   const [applyModalOpen, setApplyModalOpen] = useState(false);
-  const [selectedPet, setSelectedPet] = useState<{ id: number; name: string; questions: Array<{ question: string }> } | null>(null);
+  const [selectedPet, setSelectedPet] = useState<{ id: number; name: string; questions: Array<{ question: string }>; ownerId: number | null } | null>(null);
 
   useEffect(() => {
     const fetchRecommendations = async () => {
       try {
         const data = await getRecommendations();
-        setPets(data);
+        setPets(data as unknown as RecommendedPet[]);
       } catch {
         setPets([]);
       } finally {
@@ -75,13 +77,33 @@ const CustomerForYouCard = () => {
       id: pet.id,
       name: pet.name,
       questions: pet.adoption_questions ?? [],
+      ownerId: pet.owner_id,
     });
     setApplyModalOpen(true);
   };
 
-  const handleApplicationSubmitted = () => {
+  const handleApplicationSubmitted = async () => {
     if (selectedPet) {
       setAppliedPetIds((prev) => new Set([...prev, selectedPet.id]));
+    }
+    if (selectedPet?.ownerId) {
+      try {
+        await startConversation(selectedPet.ownerId, selectedPet.id);
+        toast.success("Application submitted! Opening chat with owner...");
+      } catch {
+        toast.success("Application submitted successfully!");
+      }
+    }
+    window.location.href = "/Pages/customer/dashboard?tab=messages";
+  };
+
+  const handleMessageOwner = async (pet: RecommendedPet) => {
+    if (!pet.owner_id) return;
+    try {
+      await startConversation(pet.owner_id, pet.id);
+      window.location.href = "/Pages/customer/dashboard?tab=messages";
+    } catch {
+      toast.error("Failed to start conversation.");
     }
   };
 
@@ -200,17 +222,30 @@ const CustomerForYouCard = () => {
                   </div>
                 )}
 
-                <div className="flex items-center justify-between pt-2 border-t border-[#dabcac]">
-                  <span className="text-sm font-semibold text-[#C4622D]">
-                    ₱{pet.adoption_fee.toLocaleString()}
-                  </span>
-                  <Button
-                    onClick={() => handleApply(pet)}
-                    disabled={hasApplied}
-                    className={`bg-[#C4622D] hover:bg-amber-700 text-sm ${hasApplied ? "opacity-50 cursor-not-allowed" : ""}`}
-                  >
-                    {hasApplied ? "Applied" : "Apply Now"}
-                  </Button>
+                <div className="space-y-2 pt-2 border-t border-[#dabcac]">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-semibold text-[#C4622D]">
+                      ₱{pet.adoption_fee.toLocaleString()}
+                    </span>
+                    <Button
+                      onClick={() => handleMessageOwner(pet)}
+                      variant="outline"
+                      className="border-[#C4622D] text-[#C4622D] hover:bg-[#C4622D]/5 text-sm flex items-center justify-center gap-2"
+                    >
+                      <MessageCircle className="w-4 h-4" />
+                      Message Owner
+                    </Button>
+                  </div>
+                  {pet.owner_id && !hasApplied && (
+                    
+                    <Button
+                      onClick={() => handleApply(pet)}
+                      disabled={hasApplied}
+                      className={`bg-[#C4622D] hover:bg-amber-700 w-full text-sm ${hasApplied ? "opacity-50 cursor-not-allowed" : ""}`}
+                    >
+                      {hasApplied ? "Applied" : "Apply Now"}
+                    </Button>
+                  )}
                 </div>
               </CardContent>
             </Card>

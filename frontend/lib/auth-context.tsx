@@ -131,6 +131,40 @@ interface AuthContextType {
     key_metrics: Record<string, number>;
     species_distribution: Record<string, number>;
   }>;
+  getConversations: () => Promise<ConversationItem[]>;
+  getMessages: (conversationId: number) => Promise<Message[]>;
+  sendMessage: (conversationId: number, body: string) => Promise<void>;
+  getUnreadCount: () => Promise<number>;
+  startConversation: (ownerId: number, petId?: number) => Promise<void>;
+}
+
+export interface Message {
+  id: number;
+  conversation_id: number;
+  sender_id: number;
+  body: string;
+  is_read: boolean;
+  sender: { customer: string | null } | { customer_name: string | null };
+  created_at: string;
+}
+
+export interface ConversationItem {
+  id: number;
+  customer_id: number;
+  owner_id: number;
+  pet_id: number | null;
+  last_message_at: string | null;
+  latestMessage: {
+    id: number;
+    body: string;
+    sender_id: number;
+    created_at: string;
+  } | null;
+  messages_count: number;
+  unread_count: number;
+  owner: { id: number; customer: string | null; customer_name: string | null };
+  customer: { id: number; customer: string | null; customer_name: string | null };
+  pet: { id: number; name: string | null } | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -160,7 +194,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           axios.isAxiosError(err) &&
           err.response?.status === 401
         ) {
-          await api.post("/logout").catch(() => {});
+          await api.post("/logout").catch(() => { });
         }
         if (mounted) {
           setUser(null);
@@ -351,6 +385,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   };
 
+  const getConversations = async (): Promise<ConversationItem[]> => {
+  const res = await api.get("/conversations");
+  return res.data.conversations as ConversationItem[];
+};
+
+const getMessages = async (conversationId: number): Promise<Message[]> => {
+  const res = await api.get(`/conversations/${conversationId}/messages`);
+  return res.data.messages as Message[];
+};
+
+const sendMessage = async (conversationId: number, body: string): Promise<void> => {
+  await api.post(`/conversations/${conversationId}/messages`, { body });
+};
+
+const getUnreadCount = async (): Promise<number> => {
+  const res = await api.get("/unread-count");
+  return res.data.count as number;
+};
+
+const startConversation = async (ownerId: number, petId?: number): Promise<void> => {
+  await api.post("/conversations", { owner_id: ownerId, pet_id: petId });
+};
+
   return (
     <AuthContext.Provider
       value={{
@@ -372,6 +429,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         getDashboardStats,
         getRecommendations,
         getOwnersDashboardStats,
+        getConversations,
+        getMessages,
+        sendMessage,
+        getUnreadCount,
+        startConversation
       }}
     >
       {children}

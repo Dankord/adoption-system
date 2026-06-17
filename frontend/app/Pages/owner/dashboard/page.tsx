@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { SiteHeader } from "@/components/site-header";
 import OwnerCards from "./components/OwnerCards";
@@ -15,7 +16,16 @@ type TabKey = "pets" | "applications" | "stats" | "messages";
 
 export default function OwnerDashboardPage() {
   const { user } = useAuth();
-  const [activeTab, setActiveTab] = useState<TabKey>("pets");
+  const searchParams = useSearchParams();
+  const initialTab = (searchParams.get("tab") as TabKey | null) || "pets";
+  const [activeTab, setActiveTab] = useState<TabKey>(initialTab);
+
+  useEffect(() => {
+    const tab = searchParams.get("tab") as TabKey | null;
+    if (tab) {
+      setActiveTab(tab);
+    }
+  }, [searchParams]);
 
   const renderContent = () => {
     switch (activeTab) {

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { SiteHeader } from "@/components/site-header";
 import CustomerCard from "./components/CustomerCards";
@@ -19,8 +20,17 @@ type TabKey = "applications" | "for-you" | "messages" | "pet-care" | "profile";
 
 export default function CustomerDashboardPage() {
   const { user } = useAuth();
-  const [activeTab, setActiveTab] = useState<TabKey>("applications");
+  const searchParams = useSearchParams();
+  const initialTab = (searchParams.get("tab") as TabKey | null) || "applications";
+  const [activeTab, setActiveTab] = useState<TabKey>(initialTab);
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
+
+  useEffect(() => {
+    const tab = searchParams.get("tab") as TabKey | null;
+    if (tab) {
+      setActiveTab(tab);
+    }
+  }, [searchParams]);
 
   const renderContent = () => {
     switch (activeTab) {

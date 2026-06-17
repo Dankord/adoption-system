@@ -38,12 +38,20 @@ const editProfileSchema = z.object({
   }),
   has_space: z.boolean(),
   previous_owner: z.boolean(),
-  household_number: z.coerce.number().min(1, "Must be at least 1."),
+  household_number: z.number().min(1, "Must be at least 1."),
   has_pets: z.boolean(),
   typical_sched: z.string().min(1, "Schedule is required."),
 });
 
-type EditFormValues = z.infer<typeof editProfileSchema>;
+type EditFormValues = {
+  customer_name: string;
+  housing_type: "Apartment" | "Condominium" | "House with Yard" | "House without Yard" | "Other";
+  has_space: boolean;
+  previous_owner: boolean;
+  household_number: number;
+  has_pets: boolean;
+  typical_sched: string;
+};
 
 interface EditProfileModalProps {
   isOpen: boolean;

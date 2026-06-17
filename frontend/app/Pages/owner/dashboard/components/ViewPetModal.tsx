@@ -53,7 +53,7 @@ export function ViewPetModal({ isOpen, onClose, pet }: ViewPetModalProps) {
           <div className="space-y-6">
             <div className="w-full h-56 rounded-xl overflow-hidden bg-[#f5ebe0]">
               <img
-                src={pet.image}
+                src={pet.image ?? undefined}
                 alt={pet.name}
                 className="w-full h-full object-cover"
               />

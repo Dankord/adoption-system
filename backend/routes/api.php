@@ -6,6 +6,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PetImageController;
 use App\Http\Controllers\PetController;
 use App\Http\Controllers\ApplicationController;
+use App\Http\Controllers\ConversationController;
 
 Route::get('/health', function () {
     return response()->json(['status' => 'OK']);
@@ -38,4 +39,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/applications/{id}', [ApplicationController::class, 'update']);
     Route::get('/dashboard-stats', [ApplicationController::class, 'stats']);
     Route::get('/dashboard-owners-stats', [ApplicationController::class, 'ownersStats']);
+
+    Route::get('/conversations', [ConversationController::class, 'index']);
+    Route::post('/conversations', [ConversationController::class, 'store']);
+    Route::get('/conversations/{conversationId}/messages', [ConversationController::class, 'messages']);
+    Route::post('/conversations/{conversationId}/messages', [ConversationController::class, 'sendMessage']);
+    Route::get('/unread-count', [ConversationController::class, 'unreadCount']);
 });
