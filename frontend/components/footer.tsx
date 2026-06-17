@@ -67,7 +67,7 @@ export function Footer({ onNavigate }: FooterProps) {
                     <PawPrint className="w-4 h-4 text-white" />
                   </div>
                   <div>
-                    <p className="text-white text-sm font-medium">Paws & Hearts Center</p>
+                    <p className="text-white text-sm font-medium">Adoptify Center</p>
                     <p className="text-white/60 text-xs">Quezon City, Metro Manila</p>
                   </div>
                 </div>
@@ -97,7 +97,7 @@ export function Footer({ onNavigate }: FooterProps) {
                 {
                   icon: <Mail className="w-4 h-4 text-[#E8DDD3] shrink-0" />,
                   label: 'Email',
-                  value: 'adopt@pawsandhearts.ph\ndonations@pawsandhearts.ph',
+                  value: 'adopt@adoptify.ph\ndonations@adoptify.ph',
                 },
                 {
                   icon: <Clock className="w-4 h-4 text-[#E8DDD3] shrink-0" />,
@@ -127,7 +127,7 @@ export function Footer({ onNavigate }: FooterProps) {
               <div className="w-8 h-8 rounded-full bg-[#C4622D] flex items-center justify-center">
                 <PawPrint className="w-4 h-4 text-white" />
               </div>
-              <span className="text-white font-semibold" style={{ fontFamily: "var(--font-dm-serif)" }}>Paws & Hearts</span>
+              <span className="text-white font-semibold" style={{ fontFamily: "var(--font-dm-serif)" }}>Adoptify</span>
             </div>
             <p className="text-white/50 text-xs leading-relaxed mb-4">
               A community adoption platform connecting loving families with animals in need since 2022.
@@ -191,7 +191,7 @@ export function Footer({ onNavigate }: FooterProps) {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
-        <p className="text-white/30 text-xs">© 2026 Paws & Hearts Adoption Center. All rights reserved.</p>
+        <p className="text-white/30 text-xs">© 2026 Adoptify. All rights reserved.</p>
         <div className="flex gap-5">
           {['Privacy Policy', 'Terms of Service', 'Cookie Policy'].map(l => (
             <button key={l} className="text-white/30 hover:text-white/60 text-xs transition-colors">{l}</button>
