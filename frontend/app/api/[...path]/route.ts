@@ -15,18 +15,29 @@ async function proxy(request: NextRequest, ctx: Ctx) {
   const token = request.cookies.get(AUTH_COOKIE)?.value;
 
   const headers = new Headers();
-  headers.set("Accept", "application/json");
   const contentType = request.headers.get("content-type");
   if (contentType) headers.set("Content-Type", contentType);
+  headers.set("Accept", "application/json");
   if (token) headers.set("Authorization", `Bearer ${token}`);
 
   const hasBody = !["GET", "HEAD"].includes(request.method);
   let backendRes: Response;
   try {
+    const isMultipart = contentType?.includes("multipart/form-data") ?? false;
+    let body: BodyInit | undefined = undefined;
+    if (hasBody) {
+      body = isMultipart ? await request.blob() : await request.arrayBuffer();
+    }
+    const fetchHeaders = new Headers(headers);
+    // For multipart, set Content-Type AFTER body to preserve the boundary
+    if (contentType) {
+      fetchHeaders.set("Content-Type", contentType);
+    }
+    console.log(`[api proxy] ${request.method} ${segments} bodyType=${isMultipart ? 'blob' : 'arrayBuffer'} size=${body instanceof Blob ? body.size : body instanceof ArrayBuffer ? body.byteLength : 'stream'}`);
     backendRes = await fetch(target, {
       method: request.method,
-      headers,
-      body: hasBody ? await request.arrayBuffer() : undefined,
+      headers: fetchHeaders,
+      body,
       redirect: "manual",
     });
   } catch (err) {
@@ -35,12 +46,8 @@ async function proxy(request: NextRequest, ctx: Ctx) {
       err,
     );
     const cause = err instanceof Error ? err.message : String(err);
-    const code =
-      err && typeof err === "object" && "cause" in err
-        ? ((err as { cause?: { code?: string } }).cause?.code ?? null)
-        : null;
     return NextResponse.json(
-      { message: "Backend unreachable", target, cause, code },
+      { message: "Backend unreachable", target, cause },
       { status: 502 },
     );
   }
@@ -69,9 +76,9 @@ async function proxy(request: NextRequest, ctx: Ctx) {
     : await backendRes.text();
 
   if (backendRes.status >= 400) {
-    console.warn(
+    console.error(
       `[api proxy] upstream ${request.method} ${target} -> ${backendRes.status}`,
-      typeof payload === "string" ? payload.slice(0, 500) : payload,
+      typeof payload === "string" ? payload : JSON.stringify(payload),
     );
   }
 

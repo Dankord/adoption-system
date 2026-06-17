@@ -63,6 +63,7 @@ export const formSchema = z.object({
   vaccinated: z.boolean(),
   neutered: z.boolean(),
   specialNeeds: z.string(),
+  description: z.string(),
   temperament: z.array(z.string()).min(1, "Select at least one temperament."),
   adoptionQuestions: z.array(questionItemSchema).min(0),
 });
@@ -95,6 +96,7 @@ export function AddPetModal({ isOpen, onClose, onPetAdded }: AddPetModalProps) {
       vaccinated: false,
       neutered: false,
       specialNeeds: "",
+      description: "",
       temperament: [],
       adoptionQuestions: [],
     },
@@ -129,19 +131,20 @@ export function AddPetModal({ isOpen, onClose, onPetAdded }: AddPetModalProps) {
     const data = form.getValues();
 
     try {
-      await addPet({
-        name: data.name,
-        species: data.species,
-        breed: data.breed,
-        age: data.age,
-        gender: data.gender,
-        adoption_fee: data.adoptionFee,
-        vaccinated: data.vaccinated,
-        neutered: data.neutered,
-        special_needs: data.specialNeeds,
-        temperament: data.temperament,
-        adoptionQuestions: data.adoptionQuestions,
-      }, imageFile);
+       await addPet({
+          name: data.name,
+          species: data.species,
+          breed: data.breed,
+          age: data.age,
+          gender: data.gender,
+          adoption_fee: data.adoptionFee,
+          vaccinated: data.vaccinated,
+          neutered: data.neutered,
+          special_needs: data.specialNeeds,
+          description: data.description,
+          temperament: data.temperament,
+          adoptionQuestions: data.adoptionQuestions,
+        }, imageFile);
 
       form.reset();
       handleClose();
@@ -406,6 +409,22 @@ export function AddPetModal({ isOpen, onClose, onPetAdded }: AddPetModalProps) {
                       {...field}
                       placeholder="Describe the special needs..."
                       rows={2}
+                      className="mt-3 w-full rounded-lg border border-transparent bg-[#F2E8DB] px-3 py-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30 resize-none bg-[#F2E8DB]"
+                    />
+                  )}
+                />
+              </Field>
+
+              <Field>
+                <FieldLabel>About this pet</FieldLabel>
+                <Controller
+                  name="description"
+                  control={control}
+                  render={({ field }) => (
+                    <textarea
+                      {...field}
+                      placeholder="Write a short description about the pet..."
+                      rows={3}
                       className="mt-3 w-full rounded-lg border border-transparent bg-[#F2E8DB] px-3 py-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30 resize-none bg-[#F2E8DB]"
                     />
                   )}

@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react'
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { X, Plus, Trash2 } from "lucide-react";
@@ -30,6 +30,9 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+import { useAuth } from "@/lib/auth-context";
+import type { Pet } from "@/lib/auth-context";
+import { toast } from "sonner";
 
 const TEMPERAMENT_OPTIONS = [
   "Playful",
@@ -62,6 +65,13 @@ export const editFormSchema = z.object({
   vaccinated: z.boolean(),
   neutered: z.boolean(),
   specialNeeds: z.string(),
+  description: z.string(),
+  status: z.enum([
+    "Available",
+    "Under Review",
+    "Reserved",
+    "Adopted",
+  ]),
   temperament: z.array(z.string()).min(1, "Select at least one temperament."),
   adoptionQuestions: z.array(questionItemSchema).min(0),
 });
@@ -71,10 +81,11 @@ export type FormValues = z.infer<typeof editFormSchema>;
 interface EditPetModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit?: (data: FormValues) => void;
+  pet: Pet | null;
 }
 
-const EditPetModal = ({isOpen, onClose, onSubmit }: EditPetModalProps) => {
+const EditPetModal = ({ isOpen, onClose, pet }: EditPetModalProps) => {
+  const { updatePet } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<FormValues>({
@@ -91,10 +102,32 @@ const EditPetModal = ({isOpen, onClose, onSubmit }: EditPetModalProps) => {
       vaccinated: false,
       neutered: false,
       specialNeeds: "",
+      description: "",
+      status: "Available",
       temperament: [],
       adoptionQuestions: [],
     },
   });
+
+  useEffect(() => {
+    if (pet) {
+      form.reset({
+        name: pet.name,
+        species: pet.species as "Dog" | "Cat" | "Rabbit" | "Bird" | "Other",
+        breed: pet.breed,
+        age: pet.age,
+        gender: pet.gender as "Male" | "Female",
+        adoptionFee: pet.adoption_fee,
+        vaccinated: pet.vaccinated,
+        neutered: pet.neutered,
+        specialNeeds: pet.special_needs ?? "",
+        description: pet.description ?? "",
+        status: pet.status ?? "Available",
+        temperament: pet.temperaments ?? [],
+        adoptionQuestions: pet.adoption_questions ?? [],
+      });
+    }
+  }, [pet, form]);
 
   const { control } = form;
   const { fields, append, remove } = useFieldArray({
@@ -113,21 +146,32 @@ const EditPetModal = ({isOpen, onClose, onSubmit }: EditPetModalProps) => {
   const handleSubmitForm = async (e: React.FormEvent) => {
     e.preventDefault();
     const isValid = await form.trigger();
-    if (!isValid) return;
+    if (!isValid || !pet) return;
 
     setIsSubmitting(true);
-    const data = form.getValues();
 
     try {
-      if (onSubmit) {
-        onSubmit(data);
-      } else {
-        console.log("Form data:", data);
-      }
+      const data = form.getValues();
+      await updatePet(pet.id, {
+        name: data.name,
+        species: data.species,
+        breed: data.breed,
+        age: data.age,
+        gender: data.gender,
+        adoption_fee: data.adoptionFee,
+        vaccinated: data.vaccinated,
+        neutered: data.neutered,
+        special_needs: data.specialNeeds,
+        description: data.description ?? "",
+        status: data.status,
+        temperament: data.temperament,
+        adoptionQuestions: data.adoptionQuestions,
+      });
       form.reset();
       onClose();
+      toast.success("Pet updated successfully");
     } catch {
-      console.error("Failed to submit");
+      toast.error("Failed to update pet");
     } finally {
       setIsSubmitting(false);
     }
@@ -141,10 +185,10 @@ const EditPetModal = ({isOpen, onClose, onSubmit }: EditPetModalProps) => {
         <CardHeader className="flex flex-row items-center justify-between border-b border-[#dabcac] pb-0">
           <div>
             <CardTitle style={{ fontFamily: "var(--font-dm-serif)" }}>
-              Add New Pet
+              Edit Pet
             </CardTitle>
             <CardDescription>
-              Fill in the details to list a new pet.
+              Update the information of the pet.
             </CardDescription>
           </div>
           <Button
@@ -297,6 +341,47 @@ const EditPetModal = ({isOpen, onClose, onSubmit }: EditPetModalProps) => {
                 />
               </div>
 
+              <Controller
+                name="status"
+                control={control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel>Status</FieldLabel>
+
+                    <Select
+                      value={field.value}
+                      onValueChange={field.onChange}
+                    >
+                      <SelectTrigger className="bg-[#F2E8DB]">
+                        <SelectValue placeholder="Select status" />
+                      </SelectTrigger>
+
+                      <SelectContent>
+                        <SelectItem value="Available">
+                          Available
+                        </SelectItem>
+
+                        <SelectItem value="Under Review">
+                          Under Review
+                        </SelectItem>
+
+                        <SelectItem value="Reserved">
+                          Reserved
+                        </SelectItem>
+
+                        <SelectItem value="Adopted">
+                          Adopted
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
+
               <Field>
                 <FieldLabel>Health Status</FieldLabel>
                 <div className="flex gap-6">
@@ -350,6 +435,22 @@ const EditPetModal = ({isOpen, onClose, onSubmit }: EditPetModalProps) => {
               </Field>
 
               <Field>
+                <FieldLabel>About this pet</FieldLabel>
+                <Controller
+                  name="description"
+                  control={control}
+                  render={({ field }) => (
+                    <textarea
+                      {...field}
+                      placeholder="Write a short description about the pet..."
+                      rows={3}
+                      className="mt-3 w-full rounded-lg border border-transparent bg-[#F2E8DB] px-3 py-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30 resize-none bg-[#F2E8DB]"
+                    />
+                  )}
+                />
+              </Field>
+
+              <Field>
                 <FieldLabel>Temperament</FieldLabel>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-1">
                   {TEMPERAMENT_OPTIONS.map((option) => (
@@ -363,8 +464,8 @@ const EditPetModal = ({isOpen, onClose, onSubmit }: EditPetModalProps) => {
                           <label
                             key={option}
                             className={`flex items-center gap-2 rounded-lg border px-3 py-2 cursor-pointer transition-all text-sm ${isChecked
-                                ? "border-[#C4622D] bg-[#C4622D]/10 text-[#C4622D]"
-                                : "border-border bg-[#F2E8DB] hover:border-[#7A6150]/50"
+                              ? "border-[#C4622D] bg-[#C4622D]/10 text-[#C4622D]"
+                              : "border-border bg-[#F2E8DB] hover:border-[#7A6150]/50"
                               }`}
                           >
                             <Checkbox
@@ -470,7 +571,7 @@ const EditPetModal = ({isOpen, onClose, onSubmit }: EditPetModalProps) => {
             disabled={isSubmitting}
             className="bg-[#C4622D] hover:bg-amber-700"
           >
-            {isSubmitting ? "Adding..." : "Add Pet"}
+            {isSubmitting ? "Saving..." : "Save Changes"}
           </Button>
         </div>
       </Card>

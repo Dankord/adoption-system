@@ -1,79 +1,66 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import { useAuth } from "@/lib/auth-context";
 import { OwnerPetCard, type OwnerPet } from "./OwnerPetCard";
 import { AddPetModal } from "./AddPetModal";
 import { ViewPetModal } from "./ViewPetModal";
+import EditPetModal from "./EditPetModal";
 import type { FormValues as AddPetFormValues } from "./AddPetModal";
+import { toast } from "sonner";
 
-const MOCK_PETS: OwnerPet[] = [
-  {
-    id: 1,
-    name: "Buddy",
-    species: "Dog",
-    breed: "Golden Retriever",
-    age: "2 years",
-    gender: "Male",
-    status: "Available",
-    adoptionFee: 5000,
-    image: "https://images.unsplash.com/photo-1552053831-71592a24f6c0?w=400&h=300&fit=crop",
-    vaccinated: true,
-    neutered: true,
-  },
-  {
-    id: 2,
-    name: "Whiskers",
-    species: "Cat",
-    breed: "Persian",
-    age: "1 year",
-    gender: "Female",
-    status: "Under Review",
-    adoptionFee: 3000,
-    image: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400&h=300&fit=crop",
-    vaccinated: true,
-    neutered: false,
-  },
-  {
-    id: 3,
-    name: "Thumper",
-    species: "Rabbit",
-    breed: "Holland Lop",
-    age: "6 months",
-    gender: "Male",
-    status: "Available",
-    adoptionFee: 2000,
-    image: "https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?w=400&h=300&fit=crop",
-    vaccinated: false,
-    neutered: true,
-  },
-  {
-    id: 4,
-    name: "Kiwi",
-    species: "Bird",
-    breed: "Cockatiel",
-    age: "1 year",
-    gender: "Female",
-    status: "Reserved",
-    adoptionFee: 4000,
-    image: "https://images.unsplash.com/photo-1552728089-57bdde30beb3?w=400&h=300&fit=crop",
-    vaccinated: true,
-    neutered: true,
-  },
-];
+const OWNER_PET_MAP = (pet: import("@/lib/auth-context").Pet): OwnerPet => ({
+  id: pet.id,
+  name: pet.name,
+  species: pet.species,
+  breed: pet.breed,
+  age: pet.age,
+  gender: pet.gender,
+  status: pet.status as OwnerPet["status"],
+  adoptionFee: pet.adoption_fee,
+  image: pet.image ?? "https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=400&h=300&fit=crop",
+  vaccinated: pet.vaccinated,
+  neutered: pet.neutered,
+});
 
 const OwnerPetListings = () => {
-  const [pets, setPets] = useState<OwnerPet[]>(MOCK_PETS);
+  const { getPets, deletePet, addPet } = useAuth();
+  const [pets, setPets] = useState<OwnerPet[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [selectedPet, setSelectedPet] = useState<OwnerPet | null>(null);
+  const [apiSelectedPet, setApiSelectedPet] = useState<import("@/lib/auth-context").Pet | null>(null);
+  const apiPetsMap = useRef<Map<number, import("@/lib/auth-context").Pet>>(new Map());
+
+  const fetchPets = async () => {
+    try {
+      const apiPets = await getPets();
+      const map = new Map(apiPets.map(p => [p.id, p]));
+      apiPetsMap.current = map;
+      setPets(apiPets.map(OWNER_PET_MAP));
+    } catch {
+      setPets([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchPets();
+  }, []);
 
   const handleAdd = () => {
     setIsAddModalOpen(true);
   };
 
   const handleEdit = (pet: OwnerPet) => {
-    alert(`Edit pet: ${pet.name} - This will be connected to backend.`);
+    setSelectedPet(pet);
+    const apiPet = apiPetsMap.current.get(pet.id);
+    setApiSelectedPet(apiPet ?? null);
+    setIsEditModalOpen(true);
   };
 
   const handleDelete = (pet: OwnerPet) => {
@@ -81,35 +68,57 @@ const OwnerPetListings = () => {
     setIsDeleteModalOpen(true);
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (selectedPet) {
-      setPets((prev) => prev.filter((p) => p.id !== selectedPet.id));
-      setIsDeleteModalOpen(false);
-      setSelectedPet(null);
+      try {
+        await deletePet(selectedPet.id);
+        setPets((prev) => prev.filter((p) => p.id !== selectedPet.id));
+        toast.success("Pet deleted successfully");
+      } catch {
+        toast.error("Failed to delete pet");
+      } finally {
+        setIsDeleteModalOpen(false);
+        setSelectedPet(null);
+      }
     }
   };
 
   const handleView = (pet: OwnerPet) => {
     setSelectedPet(pet);
+    const apiPet = apiPetsMap.current.get(pet.id);
+    setApiSelectedPet(apiPet ?? null);
     setIsViewModalOpen(true);
   };
 
-  const handleAddPet = (data: AddPetFormValues) => {
-    const newPet: OwnerPet = {
-      id: Date.now(),
-      name: data.name,
-      species: data.species,
-      breed: data.breed,
-      age: data.age,
-      gender: data.gender,
-      status: "Under Review",
-      adoptionFee: data.adoptionFee,
-      image: "https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=400&h=300&fit=crop",
-      vaccinated: data.vaccinated,
-      neutered: data.neutered,
-    };
-    setPets((prev) => [...prev, newPet]);
-    setIsAddModalOpen(false);
+  const handleAddPet = async (data: AddPetFormValues) => {
+    try {
+      await addPet({
+        name: data.name,
+        species: data.species,
+        breed: data.breed,
+        age: data.age,
+        gender: data.gender,
+        adoption_fee: data.adoptionFee,
+        vaccinated: data.vaccinated,
+        neutered: data.neutered,
+        special_needs: data.specialNeeds,
+        description: data.description,
+        temperament: data.temperament,
+        adoptionQuestions: data.adoptionQuestions,
+      });
+      setIsAddModalOpen(false);
+      fetchPets();
+      toast.success("Pet added successfully!");
+    } catch {
+      toast.error("Failed to add pet");
+    }
+  };
+
+  const handleEditPet = async () => {
+    setIsEditModalOpen(false);
+    setApiSelectedPet(null);
+    fetchPets();
+    toast.success("Pet updated successfully");
   };
 
   return (
@@ -127,28 +136,36 @@ const OwnerPetListings = () => {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {pets.map((pet) => (
-          <OwnerPetCard
-            key={pet.id}
-            pet={pet}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-            onView={handleView}
-          />
-        ))}
-      </div>
+      {isLoading ? (
+        <div className="text-center py-12">
+          <p className="text-[#7A6150]">Loading pets...</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {pets.map((pet) => (
+            <OwnerPetCard
+              key={pet.id}
+              pet={pet}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              onView={handleView}
+            />
+          ))}
+        </div>
+      )}
 
-      {pets.length === 0 && (
+      {pets.length === 0 && !isLoading && (
         <div className="text-center py-12">
           <p className="text-4xl mb-3">🐾</p>
           <p className="text-[#7A6150]">No pets listed yet. Click &quot;Add Pet&quot; to get started.</p>
         </div>
       )}
 
-      <AddPetModal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} onSubmit={handleAddPet} />
+      <AddPetModal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} onPetAdded={handleAddPet} />
 
-      <ViewPetModal isOpen={isViewModalOpen} onClose={() => setIsViewModalOpen(false)} pet={selectedPet} />
+      <ViewPetModal isOpen={isViewModalOpen} onClose={() => setIsViewModalOpen(false)} pet={apiSelectedPet} />
+
+      <EditPetModal isOpen={isEditModalOpen} onClose={handleEditPet} pet={apiSelectedPet} />
 
       {isDeleteModalOpen && selectedPet && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
