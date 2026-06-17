@@ -36,6 +36,7 @@ export interface DisplayPet {
   description: string;
   requirements: string[];
   customQuestions: string[];
+  adoptionQuestions: Array<{ question: string }>;
 }
 
 export const PET_DEFAULTS = {
@@ -78,6 +79,8 @@ export function mapApiPetToDisplay(apiPet: ApiPet): DisplayPet {
     customQuestions:
       apiPet.adoption_questions?.map((q) => q.question) ??
       PET_DEFAULTS.customQuestions,
+    adoptionQuestions:
+      apiPet.adoption_questions ?? [],
   };
 }
 

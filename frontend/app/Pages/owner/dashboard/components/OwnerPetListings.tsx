@@ -90,28 +90,10 @@ const OwnerPetListings = () => {
     setIsViewModalOpen(true);
   };
 
-  const handleAddPet = async (data: AddPetFormValues) => {
-    try {
-      await addPet({
-        name: data.name,
-        species: data.species,
-        breed: data.breed,
-        age: data.age,
-        gender: data.gender,
-        adoption_fee: data.adoptionFee,
-        vaccinated: data.vaccinated,
-        neutered: data.neutered,
-        special_needs: data.specialNeeds,
-        description: data.description,
-        temperament: data.temperament,
-        adoptionQuestions: data.adoptionQuestions,
-      });
-      setIsAddModalOpen(false);
-      fetchPets();
-      toast.success("Pet added successfully!");
-    } catch {
-      toast.error("Failed to add pet");
-    }
+  const handleAddPet = async () => {
+    setIsAddModalOpen(false);
+    fetchPets();
+    toast.success("Pet added successfully!");
   };
 
   const handleEditPet = async () => {

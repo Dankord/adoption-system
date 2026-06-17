@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PetImageController;
 use App\Http\Controllers\PetController;
+use App\Http\Controllers\ApplicationController;
 
 Route::get('/health', function () {
     return response()->json(['status' => 'OK']);
@@ -13,6 +14,7 @@ Route::get('/health', function () {
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
+// Public routes (must be before auth middleware group so they're matched first)
 Route::get('/pets', [PetController::class, 'publicIndex']);
 Route::get('/pets/{id}', [PetController::class, 'publicShow']);
 
@@ -27,7 +29,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/owner-pets', [PetController::class, 'index']);
     Route::post('/pets', [PetController::class, 'store']);
-    Route::get('/pets/{id}', [PetController::class, 'show']);
     Route::put('/pets/{id}', [PetController::class, 'update']);
     Route::delete('/pets/{id}', [PetController::class, 'destroy']);
+
+    Route::post('/application', [ApplicationController::class, 'store']);
+    Route::get('/applications', [ApplicationController::class, 'index']);
+    Route::put('/applications/{id}', [ApplicationController::class, 'update']);
 });
