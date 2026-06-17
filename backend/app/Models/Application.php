@@ -20,6 +20,11 @@ class Application extends Model
 
     protected $casts = [
         'answers' => 'array',
+        'submitted_at' => 'datetime',
+        'interview_scheduled_at' => 'datetime',
+        'approved_at' => 'datetime',
+        'rejected_at' => 'datetime',
+        'completed_at' => 'datetime',
     ];
 
     public function customer() {
@@ -28,5 +33,9 @@ class Application extends Model
     public function pet()
     {
         return $this->belongsTo(Pet::class);
+    }
+    public function careReminders()
+    {
+        return $this->hasMany(CareReminder::class);
     }
 }

@@ -6,6 +6,10 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Models\Application;
 use App\Models\Pet;
+use App\Models\CareReminder;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ThankYouForAdopting;
+use Illuminate\Support\Facades\Log;
 
 class ApplicationController extends Controller
 {
@@ -120,12 +124,17 @@ class ApplicationController extends Controller
             $appId = $user->customer->id;
             $apps = Application::where('customer_id', $appId)->get();
 
+            $completedAppIds = $apps->where('status', 'completed')->pluck('id');
+            $careRemindersCount = CareReminder::whereIn('application_id', $completedAppIds)
+                ->whereIn('status', ['pending', 'sent'])
+                ->count();
+
             $stats = [
                 'customer' => [
                     'applications_count' => $apps->count(),
                     'under_review_count' => $apps->where('status', 'under_review')->count(),
                     'approved_count' => $apps->where('status', 'approved')->count(),
-                    'care_reminders_count' => 0,
+                    'care_reminders_count' => $careRemindersCount,
                 ],
             ];
         } else {
@@ -242,12 +251,118 @@ class ApplicationController extends Controller
             if ($pet) {
                 $pet->update(['status' => 'adopted']);
             }
+
+            $this->createCareReminders($application);
         }
 
         $application->update(['status' => $newStatus]);
 
         return response()->json([
             'application' => $application->fresh()->load(['pet', 'customer']),
+        ]);
+    }
+
+    protected function createCareReminders(Application $application): void
+    {
+        $completedAt = $application->completed_at ?? now();
+
+        $reminders = [
+            [
+                'reminder_type' => 'vaccination',
+                'survey_type' => 'Initial Vaccination Check',
+                'scheduled_at' => $completedAt->copy()->addWeeks(1),
+            ],
+            [
+                'reminder_type' => 'vaccination',
+                'survey_type' => '1-Month Vet Visit',
+                'scheduled_at' => $completedAt->copy()->addMonth(),
+            ],
+            [
+                'reminder_type' => 'vaccination',
+                'survey_type' => '3-Month Well-being Check',
+                'scheduled_at' => $completedAt->copy()->addMonths(3),
+            ],
+        ];
+
+        foreach ($reminders as $reminderData) {
+            CareReminder::create(array_merge($reminderData, [
+                'application_id' => $application->id,
+                'status' => 'pending',
+            ]));
+        }
+
+        try {
+            Mail::to($application->customer->user->email)->send(new ThankYouForAdopting($application));
+        } catch (\Throwable $e) {
+            Log::error('Failed to send thank you email: ' . $e->getMessage());
+        }
+    }
+
+    public function getCareReminders(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        $customer = $user->customer;
+
+        if (!$customer) {
+            return response()->json(['reminders' => []]);
+        }
+
+        $applications = Application::where('customer_id', $customer->id)
+            ->where('status', 'completed')
+            ->with('pet')
+            ->get();
+
+        $applications->load('careReminders');
+
+        $reminders = collect();
+        foreach ($applications as $app) {
+            foreach ($app->careReminders as $reminder) {
+                $reminders->push([
+                    'id' => $reminder->id,
+                    'application_id' => $reminder->application_id,
+                    'reminder_type' => $reminder->reminder_type,
+                    'survey_type' => $reminder->survey_type,
+                    'status' => $reminder->status,
+                    'scheduled_at' => $reminder->scheduled_at,
+                    'completed_at' => $reminder->completed_at,
+                    'pet_name' => $app->pet->name ?? 'Unknown',
+                    'pet_species' => $app->pet->species ?? '',
+                    'pet_breed' => $app->pet->breed ?? '',
+                    'is_overdue' => $reminder->isOverdue(),
+                ]);
+            }
+        }
+
+        $reminders = $reminders->sortBy('scheduled_at')->values()->toArray();
+
+        return response()->json(['reminders' => $reminders]);
+    }
+
+    public function submitSurvey(Request $request, int $reminderId): JsonResponse
+    {
+        $user = $request->user();
+        $customer = $user->customer;
+
+        if (!$customer) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $validated = $request->validate([
+            'responses' => 'required|array',
+            'responses.*' => 'nullable|string',
+        ]);
+
+        $reminder = CareReminder::where('id', $reminderId)
+            ->whereHas('application', function ($query) use ($customer) {
+                $query->where('customer_id', $customer->id);
+            })
+            ->firstOrFail();
+
+        $reminder->markCompleted($validated['responses']);
+
+        return response()->json([
+            'message' => 'Survey submitted successfully!',
+            'reminder' => $reminder->fresh(),
         ]);
     }
 }
