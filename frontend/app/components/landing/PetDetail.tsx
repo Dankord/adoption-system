@@ -27,6 +27,7 @@ export interface Pet {
   description: string;
   requirements: string[];
   customQuestions: string[];
+  adoptionQuestions?: Array<{ question: string }>;
 }
 
 interface PetDetailProps {

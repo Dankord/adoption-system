@@ -80,6 +80,24 @@ export interface EditPetInput {
   image?: string;
 }
 
+export interface ApplicationAnswer {
+  question: string;
+  answer: string | null;
+}
+
+export interface OwnerApplication {
+  id: number;
+  customer_name: string;
+  pet_name: string;
+  pet_species: string;
+  pet_breed: string;
+  pet_id: number;
+  submitted_at: string;
+  status: string;
+  answers: ApplicationAnswer[];
+  created_at: string;
+}
+
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
@@ -94,6 +112,8 @@ interface AuthContextType {
   addPet: (data: AddPetInput, imageFile?: File | null) => Promise<Pet>;
   updatePet: (id: number, data: EditPetInput, imageFile?: File | null) => Promise<Pet>;
   deletePet: (id: number) => Promise<void>;
+  getApplications: () => Promise<OwnerApplication[]>;
+  updateApplication: (id: number, status: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -250,6 +270,39 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await api.delete(`/pets/${id}`);
   };
 
+  const getApplications = async (): Promise<OwnerApplication[]> => {
+    const res = await api.get("/applications");
+    const apps = res.data.applications as Array<{
+      id: number;
+      pet_id: number;
+      status: string;
+      answers: Array<{ question: string; answer: string }>;
+      customer: { customer_name: string | null };
+      pet: { name: string | null; species: string | null; breed: string | null };
+      created_at: string;
+      submitted_at: string;
+    }>;
+    return apps.map((app) => ({
+      id: app.id,
+      customer_name: app.customer?.customer_name ?? "Unknown",
+      pet_name: app.pet?.name ?? "Unknown",
+      pet_species: app.pet?.species ?? "",
+      pet_breed: app.pet?.breed ?? "",
+      pet_id: app.pet_id,
+      submitted_at: app.submitted_at ?? app.created_at,
+      status: app.status,
+      answers: (app.answers ?? []).map((a) => ({
+        question: a.question,
+        answer: a.answer ?? "",
+      })),
+      created_at: app.created_at,
+    }));
+  };
+
+  const updateApplication = async (id: number, status: string): Promise<void> => {
+    await api.put(`/applications/${id}`, { status });
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -266,6 +319,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         addPet,
         updatePet,
         deletePet,
+        getApplications,
+        updateApplication,
       }}
     >
       {children}

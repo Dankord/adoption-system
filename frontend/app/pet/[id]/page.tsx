@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { SiteHeader } from "@/components/site-header";
 import { PetDetail } from "@/app/components/landing/PetDetail";
+import { ApplyModal } from "@/app/components/landing/ApplyModal";
 import { PetService, mapApiPetToDisplay } from "@/lib/pet-service";
 import { isProfileComplete, normalizeRole } from "@/lib/routes";
 
@@ -14,6 +15,7 @@ export default function PetDetailPage() {
   const petId = Number(id);
   const [pet, setPet] = useState<ReturnType<typeof mapApiPetToDisplay> | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchPet = async () => {
@@ -35,6 +37,14 @@ export default function PetDetailPage() {
     normalizeRole(user.role) === "customer" &&
     !isProfileComplete(user.role, user.profile_completed_at);
   const canApply = isAuthenticated && !needsProfile;
+
+  const handleApply = () => {
+    setIsApplyModalOpen(true);
+  };
+
+  const handleApplicationSubmitted = () => {
+    setPet((prev) => (prev ? { ...prev, status: "Under Review" } : prev));
+  };
 
   if (loading) {
     return (
@@ -59,9 +69,15 @@ export default function PetDetailPage() {
         pet={pet}
         isAuthenticated={isAuthenticated}
         canApply={canApply}
-        onApply={() => {
-          // Adoption flow will be wired up here.
-        }}
+        onApply={handleApply}
+      />
+      <ApplyModal
+        isOpen={isApplyModalOpen}
+        onClose={() => setIsApplyModalOpen(false)}
+        petId={petId}
+        petName={pet.name}
+        questions={pet.adoptionQuestions || []}
+        onSubmitted={handleApplicationSubmitted}
       />
     </div>
   );

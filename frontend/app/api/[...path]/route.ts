@@ -33,7 +33,6 @@ async function proxy(request: NextRequest, ctx: Ctx) {
     if (contentType) {
       fetchHeaders.set("Content-Type", contentType);
     }
-    console.log(`[api proxy] ${request.method} ${segments} bodyType=${isMultipart ? 'blob' : 'arrayBuffer'} size=${body instanceof Blob ? body.size : body instanceof ArrayBuffer ? body.byteLength : 'stream'}`);
     backendRes = await fetch(target, {
       method: request.method,
       headers: fetchHeaders,
@@ -69,16 +68,16 @@ async function proxy(request: NextRequest, ctx: Ctx) {
     );
   }
 
-  const responseContentType = backendRes.headers.get("content-type") ?? "";
+const responseContentType = backendRes.headers.get("content-type") ?? "";
   const isJson = responseContentType.includes("application/json");
   const payload: unknown = isJson
     ? await backendRes.json().catch(() => null)
     : await backendRes.text();
 
   if (backendRes.status >= 400) {
-    console.error(
+    console.warn(
       `[api proxy] upstream ${request.method} ${target} -> ${backendRes.status}`,
-      typeof payload === "string" ? payload : JSON.stringify(payload),
+      typeof payload === "string" ? payload.slice(0, 500) : payload,
     );
   }
 
