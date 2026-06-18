@@ -10,7 +10,7 @@ import {
   requiresOnboarding,
   signinWithCallback,
 } from "@/lib/routes";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { ReactNode, useEffect, useMemo } from "react";
 
 function LoadingScreen() {
@@ -64,7 +64,6 @@ function resolveAccess(
 export function AuthGuard({ children }: { children: ReactNode }) {
   const { user, isAuthenticated, isLoading } = useAuth();
   const pathname = usePathname();
-  const router = useRouter();
 
   const role = user?.role;
   const profileComplete = isProfileComplete(role, user?.profile_completed_at);
@@ -86,30 +85,22 @@ export function AuthGuard({ children }: { children: ReactNode }) {
       return;
     }
 
+    let target = "";
+
     if (!isAuthenticated) {
-      const target = signinWithCallback(pathname);
-      if (pathname === target) return;
-      router.replace(target);
-      return;
-    }
-
-    if (isGuestPath(pathname)) {
-      const target = defaultAuthenticatedPath(role, profileComplete);
-      if (pathname === target) return;
-      router.replace(target);
-      return;
-    }
-
-    if (requiresOnboarding(role, profileComplete)) {
+      target = signinWithCallback(pathname);
+    } else if (isGuestPath(pathname)) {
+      target = defaultAuthenticatedPath(role, profileComplete);
+    } else if (requiresOnboarding(role, profileComplete)) {
       if (pathname === ROUTES.onboarding) return;
-      router.replace(ROUTES.onboarding);
-      return;
+      target = ROUTES.onboarding;
+    } else {
+      target = defaultAuthenticatedPath(role, profileComplete);
     }
 
-    const target = defaultAuthenticatedPath(role, profileComplete);
-    if (pathname === target) return;
-    router.replace(target);
-  }, [access, isAuthenticated, pathname, profileComplete, role, router]);
+    if (!target) return;
+    window.location.href = target;
+  }, [access, isAuthenticated, pathname, profileComplete, role]);
 
   if (access === "loading" || access === "redirecting") {
     return <LoadingScreen />;
