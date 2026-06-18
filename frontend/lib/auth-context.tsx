@@ -268,6 +268,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const res = await api.post("/login", { email, password });
     const user = normalizeUser(res.data.user as User);
     setUser(user);
+    setIsLoading(false);
     return user;
   };
 
