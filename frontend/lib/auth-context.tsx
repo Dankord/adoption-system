@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import axios from "axios";
-import api from "@/lib/api";
+import api, { setAuthToken, clearAuthToken } from "@/lib/api";
 import { ROUTES, UserRole, normalizeRole } from "@/lib/routes";
 
 export interface Customer {
@@ -268,6 +268,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signIn = async (email: string, password: string) => {
     const res = await api.post("/login", { email, password });
+    const token = res.data.token as string;
+    if (token) setAuthToken(token);
     const user = normalizeUser(res.data.user as User);
     setUser(user);
     setIsLoading(false);
@@ -284,6 +286,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch {
       // ignore
     } finally {
+      clearAuthToken();
       setUser(null);
       window.location.href = ROUTES.home;
     }
