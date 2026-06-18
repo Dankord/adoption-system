@@ -10,20 +10,21 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-#[Fillable([
-    'email',
-    'password',
-    'role',
-    'profile_completed_at'
-])]
-#[Hidden([
-    'password',
-    'remember_token'
-])]
 class User extends Authenticatable
 {
-    /** @use HasFactory<UserFactory> */
     use HasApiTokens, HasFactory, Notifiable;
+
+    protected $fillable = [
+        'email',
+        'password',
+        'role',
+        'profile_completed_at'
+    ];
+
+    protected $hidden = [
+        'password',
+        'remember_token'
+    ];
 
     protected function casts(): array
     {
