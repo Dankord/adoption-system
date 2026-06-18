@@ -2,22 +2,16 @@
 
 return [
 
-    'paths' => ['api/*', 'sanctum/csrf-cookie'],
+    'paths' => ['api/*', 'sanctum/csrf-cookie', 'login', 'register'],
 
     'allowed_methods' => ['*'],
 
     'allowed_origins' => [
-        'https://adoption-system-4h8it9uqn.vercel.app',
         'http://localhost:3000',
+        'https://adoption-system-4h8it9uqn-dankords-projects.vercel.app',
     ],
 
-    'allowed_origins_patterns' => [],
-
     'allowed_headers' => ['*'],
-
-    'exposed_headers' => [],
-
-    'max_age' => 0,
 
     'supports_credentials' => true,
 
