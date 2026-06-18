@@ -1,9 +1,9 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL,
+  baseURL: "https://adoption-system-production.up.railway.app/api",
   headers: {
-    "Accept": "application/json",
+    Accept: "application/json",
   },
   withCredentials: true,
 });

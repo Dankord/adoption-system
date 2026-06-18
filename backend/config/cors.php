@@ -8,7 +8,12 @@ return [
 
     'allowed_origins' => [
         'http://localhost:3000',
-        'https://adoption-system-4h8it9uqn-dankords-projects.vercel.app',
+        'http://127.0.0.1:3000',
+    ],
+
+    'allowed_origins_patterns' => [
+        '/^https:\/\/.*\.vercel\.app$/',
+        '/^https:\/\/.*\.vercel\.com$/',
     ],
 
     'allowed_headers' => ['*'],
