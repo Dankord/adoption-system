@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import axios from "axios";
-import api from "@/lib/api";
+import api, { setAuthToken, clearAuthToken } from "@/lib/api";
 import { ROUTES, UserRole, normalizeRole } from "@/lib/routes";
 
 export interface Customer {
@@ -240,13 +240,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (mounted) {
           setUser(normalizeUser(res.data.user));
         }
-      } catch (err) {
-        if (
-          axios.isAxiosError(err) &&
-          err.response?.status === 401
-        ) {
-          await api.post("/logout").catch(() => { });
-        }
+      } catch {
         if (mounted) {
           setUser(null);
         }
@@ -257,15 +251,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     };
 
+    const timeout = setTimeout(() => {
+      if (mounted) {
+        setUser(null);
+        setIsLoading(false);
+      }
+    }, 5000);
+
     checkAuth();
 
     return () => {
       mounted = false;
+      clearTimeout(timeout);
     };
   }, []);
 
   const signIn = async (email: string, password: string) => {
     const res = await api.post("/login", { email, password });
+    const token = res.data.token as string;
+    if (token) {
+      setAuthToken(token);
+    }
     const user = normalizeUser(res.data.user as User);
     setUser(user);
     setIsLoading(false);
@@ -279,7 +285,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signOut = async () => {
     try {
       await api.post("/logout");
+    } catch {
+      // ignore
     } finally {
+      clearAuthToken();
       setUser(null);
       window.location.href = ROUTES.home;
     }
