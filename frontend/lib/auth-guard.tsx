@@ -87,21 +87,28 @@ export function AuthGuard({ children }: { children: ReactNode }) {
     }
 
     if (!isAuthenticated) {
-      router.replace(signinWithCallback(pathname));
+      const target = signinWithCallback(pathname);
+      if (pathname === target) return;
+      router.replace(target);
       return;
     }
 
     if (isGuestPath(pathname)) {
-      router.replace(defaultAuthenticatedPath(role, profileComplete));
+      const target = defaultAuthenticatedPath(role, profileComplete);
+      if (pathname === target) return;
+      router.replace(target);
       return;
     }
 
     if (requiresOnboarding(role, profileComplete)) {
+      if (pathname === ROUTES.onboarding) return;
       router.replace(ROUTES.onboarding);
       return;
     }
 
-    router.replace(defaultAuthenticatedPath(role, profileComplete));
+    const target = defaultAuthenticatedPath(role, profileComplete);
+    if (pathname === target) return;
+    router.replace(target);
   }, [access, isAuthenticated, pathname, profileComplete, role, router]);
 
   if (access === "loading" || access === "redirecting") {
