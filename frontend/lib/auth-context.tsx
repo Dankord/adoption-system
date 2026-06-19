@@ -236,6 +236,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     let mounted = true;
 
     const checkAuth = async () => {
+      // Skip API call if user was already set by signIn()
+      // This prevents hanging when /api/user fails/hangs after login
+      if (userSetBySignIn.current) {
+        if (mounted) {
+          setIsLoading(false);
+        }
+        return;
+      }
+
       try {
         const res = await api.get("/user");
         if (mounted) {
