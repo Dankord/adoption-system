@@ -69,6 +69,8 @@ export function AuthGuard({ children }: { children: ReactNode }) {
   const role = user?.role;
   const profileComplete = isProfileComplete(role, user?.profile_completed_at);
 
+  console.log("[AuthGuard] render, user:", user, "isAuthenticated:", isAuthenticated, "isLoading:", isLoading, "pathname:", pathname);
+
   const access = useMemo(
     () =>
       resolveAccess(
@@ -81,10 +83,14 @@ export function AuthGuard({ children }: { children: ReactNode }) {
     [pathname, isLoading, isAuthenticated, role, profileComplete],
   );
 
+  console.log("[AuthGuard] access:", access);
+
   const lastRedirectTarget = useRef<string | null>(null);
 
   useEffect(() => {
+    console.log("[AuthGuard] effect, access:", access);
     if (access !== "redirecting") {
+      console.log("[AuthGuard] effect: not redirecting, returning");
       lastRedirectTarget.current = null;
       return;
     }
@@ -92,19 +98,38 @@ export function AuthGuard({ children }: { children: ReactNode }) {
     let target = "";
 
     if (!isAuthenticated) {
+      console.log("[AuthGuard] redirecting to signin");
       target = signinWithCallback(pathname);
     } else if (isGuestPath(pathname)) {
+      console.log("[AuthGuard] redirecting to default (guest path)");
       target = defaultAuthenticatedPath(role, profileComplete);
     } else if (requiresOnboarding(role, profileComplete)) {
-      if (pathname.toLowerCase() === ROUTES.onboarding.toLowerCase()) return;
+      if (pathname.toLowerCase() === ROUTES.onboarding.toLowerCase()) {
+        console.log("[AuthGuard] already on onboarding, skipping");
+        return;
+      }
+      console.log("[AuthGuard] redirecting to onboarding");
       target = ROUTES.onboarding;
     } else {
       target = defaultAuthenticatedPath(role, profileComplete);
-      if (pathname.toLowerCase() === target.toLowerCase()) return;
+      if (pathname.toLowerCase() === target.toLowerCase()) {
+        console.log("[AuthGuard] already on target, skipping");
+        return;
+      }
+      console.log("[AuthGuard] redirecting to default");
     }
 
-    if (!target) return;
-    if (lastRedirectTarget.current === target.toLowerCase()) return;
+    if (!target) {
+      console.log("[AuthGuard] no target, returning");
+      return;
+    }
+
+    if (lastRedirectTarget.current === target.toLowerCase()) {
+      console.log("[AuthGuard] duplicate redirect target, skipping");
+      return;
+    }
+
+    console.log("[AuthGuard] calling router.replace to:", target);
     lastRedirectTarget.current = target.toLowerCase();
     router.replace(target);
   }, [access, isAuthenticated, pathname, profileComplete, role, router]);

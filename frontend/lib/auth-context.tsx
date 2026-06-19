@@ -235,33 +235,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let mounted = true;
 
+    console.log("[AuthProvider] useEffect running, userSetBySignIn:", userSetBySignIn.current);
+
     const checkAuth = async () => {
+      console.log("[AuthProvider] checkAuth starting, userSetBySignIn:", userSetBySignIn.current);
       // Skip API call if user was already set by signIn()
       // This prevents hanging when /api/user fails/hangs after login
       if (userSetBySignIn.current) {
+        console.log("[AuthProvider] checkAuth SKIPPED (userSetBySignIn)");
         if (mounted) {
           setIsLoading(false);
         }
         return;
       }
 
+      console.log("[AuthProvider] calling api.get('/user')");
       try {
         const res = await api.get("/user");
+        console.log("[AuthProvider] /user response:", res.data);
         if (mounted) {
           setUser(normalizeUser(res.data.user));
         }
-      } catch {
+      } catch (err) {
+        console.log("[AuthProvider] /user error:", err);
         if (mounted && !userSetBySignIn.current) {
           setUser(null);
         }
       } finally {
         if (mounted) {
+          console.log("[AuthProvider] checkAuth finally, setting isLoading=false");
           setIsLoading(false);
         }
       }
     };
 
     const timeout = setTimeout(() => {
+      console.log("[AuthProvider] 5s timeout fired, userSetBySignIn:", userSetBySignIn.current);
       if (mounted && !userSetBySignIn.current) {
         setUser(null);
         setIsLoading(false);
@@ -271,6 +280,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     checkAuth();
 
     return () => {
+      console.log("[AuthProvider] cleanup");
       mounted = false;
       clearTimeout(timeout);
     };
