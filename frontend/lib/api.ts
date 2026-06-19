@@ -6,6 +6,7 @@ const api = axios.create({
     Accept: "application/json",
   },
   withCredentials: true,
+  timeout: 10000,
 });
 
 api.interceptors.response.use(

@@ -11,7 +11,7 @@ import {
   signinWithCallback,
 } from "@/lib/routes";
 import { usePathname, useRouter } from "next/navigation";
-import { ReactNode, useEffect, useMemo } from "react";
+import { ReactNode, useEffect, useMemo, useRef } from "react";
 
 function LoadingScreen() {
   return (
@@ -81,8 +81,11 @@ export function AuthGuard({ children }: { children: ReactNode }) {
     [pathname, isLoading, isAuthenticated, role, profileComplete],
   );
 
+  const lastRedirectTarget = useRef<string | null>(null);
+
   useEffect(() => {
     if (access !== "redirecting") {
+      lastRedirectTarget.current = null;
       return;
     }
 
@@ -101,6 +104,8 @@ export function AuthGuard({ children }: { children: ReactNode }) {
     }
 
     if (!target) return;
+    if (lastRedirectTarget.current === target.toLowerCase()) return;
+    lastRedirectTarget.current = target.toLowerCase();
     router.replace(target);
   }, [access, isAuthenticated, pathname, profileComplete, role, router]);
 
