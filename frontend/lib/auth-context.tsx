@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, ReactNode, useRef } from "react";
 import axios from "axios";
 import api from "@/lib/api";
 import { ROUTES, UserRole, normalizeRole } from "@/lib/routes";
@@ -230,6 +230,7 @@ function normalizeUser(user: User): User {
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const userSetBySignIn = useRef(false);
 
   useEffect(() => {
     let mounted = true;
@@ -241,7 +242,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setUser(normalizeUser(res.data.user));
         }
       } catch {
-        if (mounted) {
+        if (mounted && !userSetBySignIn.current) {
           setUser(null);
         }
       } finally {
@@ -252,7 +253,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
 
     const timeout = setTimeout(() => {
-      if (mounted) {
+      if (mounted && !userSetBySignIn.current) {
         setUser(null);
         setIsLoading(false);
       }
@@ -267,6 +268,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signIn = async (email: string, password: string) => {
+    userSetBySignIn.current = true;
     const res = await api.post("/login", { email, password });
     const user = normalizeUser(res.data.user as User);
     setUser(user);
@@ -282,7 +284,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       await api.post("/logout");
     } catch {
-      // ignore
+      // ignore the fail for deployment
     } finally {
       setUser(null);
       window.location.href = ROUTES.home;
