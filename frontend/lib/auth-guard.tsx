@@ -42,8 +42,8 @@ function resolveAccess(
     return onGuestPage ? "allowed" : "redirecting";
   }
 
-  // Authenticated users on signin/registration pages can stay (header handles nav)
-  // This prevents redirect loops that leave the user stuck on a loading screen
+  // Authenticated users - allow them to stay (signin page handles post-login redirect)
+  // This prevents redirect loops between signin/dashboard
   if (onGuestPage) {
     return "allowed";
   }
@@ -71,8 +71,6 @@ export function AuthGuard({ children }: { children: ReactNode }) {
   const role = user?.role;
   const profileComplete = isProfileComplete(role, user?.profile_completed_at);
 
-  console.log("[AuthGuard]", { pathname, role, isAuthenticated, isLoading, profileComplete });
-
   const access = useMemo(
     () =>
       resolveAccess(
@@ -85,23 +83,13 @@ export function AuthGuard({ children }: { children: ReactNode }) {
     [pathname, isLoading, isAuthenticated, role, profileComplete],
   );
 
-  console.log("[AuthGuard] resolved access:", access);
-
-  const lastRedirectTarget = useRef<string | null>(null);
-
   useEffect(() => {
-    console.log("[AuthGuard] effect firing, access:", access);
-    if (access !== "redirecting") {
-      lastRedirectTarget.current = null;
-      return;
-    }
+    if (access !== "redirecting") return;
 
     let target = "";
 
     if (!isAuthenticated) {
       target = signinWithCallback(pathname);
-    } else if (isGuestPath(pathname)) {
-      target = defaultAuthenticatedPath(role, profileComplete);
     } else if (requiresOnboarding(role, profileComplete)) {
       if (pathname.toLowerCase() === ROUTES.onboarding.toLowerCase()) return;
       target = ROUTES.onboarding;
@@ -111,17 +99,12 @@ export function AuthGuard({ children }: { children: ReactNode }) {
     }
 
     if (!target) return;
-    if (lastRedirectTarget.current === target.toLowerCase()) return;
-    lastRedirectTarget.current = target.toLowerCase();
-    console.log("[AuthGuard] NAVIGATING to:", target);
     router.replace(target);
   }, [access, isAuthenticated, pathname, profileComplete, role, router]);
 
   if (access === "loading" || access === "redirecting") {
-    console.log("[AuthGuard] SHOWING LOADING SCREEN (access =", access, ")");
     return <LoadingScreen />;
   }
 
-  console.log("[AuthGuard] RENDERING CHILDREN");
   return <>{children}</>;
 }
