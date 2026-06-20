@@ -1,7 +1,15 @@
 import Link from "next/link";
 import { Heart, ArrowRight } from 'lucide-react';
 
-export function Hero() {
+interface HeroProps {
+  totalAdopted?: number;
+  availableNow?: number;
+}
+
+export function Hero({ totalAdopted, availableNow }: HeroProps) {
+  const adoptedDisplay = totalAdopted !== undefined ? `${totalAdopted}+` : '47+';
+  const availableDisplay = availableNow !== undefined ? `${availableNow}` : '8';
+
   return (
     <div className="relative overflow-hidden bg-[#FFFAF4] border-b border-[#dabcac]">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-14 lg:py-20 text-center">
@@ -42,7 +50,7 @@ export function Hero() {
 
           <div className="flex-1 relative">
             <img
-              src="https://paradepets.com/.image/NTowMDAwMDAwMDAwMjE3MjU5/happy-pit-bull.jpg?profile=share4-3"
+              src="https://paradepets.com/.image/NTowMDAwMDAwMDAwMDI3MjU5/happy-pit-bull.jpg?profile=share4-3"
               alt="Happy dog after adoption"
               className="w-full h-52 sm:h-64 object-cover"
             />
@@ -67,8 +75,8 @@ export function Hero() {
 
         <div className="flex items-center justify-center gap-8 mt-10 pt-8 border-t border-[#dabcac]">
           {[
-            { value: '47+', label: 'Pets Adopted' },
-            { value: '8', label: 'Available Now' },
+            { value: adoptedDisplay, label: 'Pets Adopted' },
+            { value: availableDisplay, label: 'Available Now' },
             { value: '98%', label: 'Happy Families' },
           ].map((s, i, arr) => (
             <div key={s.label} className="flex items-center gap-8">

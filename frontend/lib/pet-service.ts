@@ -87,6 +87,11 @@ export function mapApiPetToDisplay(apiPet: ApiPet): DisplayPet {
   };
 }
 
+export interface PublicStats {
+  total_adopted: number;
+  available_now: number;
+}
+
 export const PetService = {
   async getAllPublic(): Promise<ApiPet[]> {
     const res = await api.get("/pets");
@@ -96,5 +101,10 @@ export const PetService = {
   async getOnePublic(id: number): Promise<ApiPet> {
     const res = await api.get(`/pets/${id}`);
     return res.data.pet as ApiPet;
+  },
+
+  async getPublicStats(): Promise<PublicStats> {
+    const res = await api.get("/public-stats");
+    return res.data.data as PublicStats;
   },
 };

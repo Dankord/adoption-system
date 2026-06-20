@@ -30,6 +30,17 @@ class ApplicationController extends Controller
 
         $pet = Pet::findOrFail($validated['pet_id']);
 
+        $existingApplication = Application::where('customer_id', $customer->id)
+            ->where('pet_id', $pet->id)
+            ->whereIn('status', ['submitted', 'under_review', 'reserved', 'approved'])
+            ->first();
+
+        if ($existingApplication) {
+            return response()->json([
+                'message' => 'You have already applied for this pet.',
+            ], 422);
+        }
+
         $answers = $validated['answers'] ?? [];
 
         $hasQuestions = isset($pet->adoption_questions) && count($pet->adoption_questions) > 0;
@@ -239,6 +250,15 @@ class ApplicationController extends Controller
             if ($pet) {
                 $pet->update(['status' => 'reserved']);
             }
+
+            Application::where('pet_id', $application->pet_id)
+                ->where('id', '!=', $application->id)
+                ->whereIn('status', ['submitted', 'under_review', 'reserved', 'approved'])
+                ->update([
+                    'status' => 'rejected',
+                    'rejected_at' => $now,
+                    'updated_at' => $now,
+                ]);
         } elseif ($newStatus === 'rejected' || $newStatus === 'cancelled') {
             $application->update(['rejected_at' => $now]);
             $pet = Pet::find($application->pet_id);
@@ -336,6 +356,19 @@ class ApplicationController extends Controller
         $reminders = $reminders->sortBy('scheduled_at')->values()->toArray();
 
         return response()->json(['reminders' => $reminders]);
+    }
+
+    public function publicStats(): JsonResponse
+    {
+        $totalAdopted = Application::where('status', 'completed')->count();
+        $availableNow = Pet::where('status', 'available')->count();
+
+        return response()->json([
+            'data' => [
+                'total_adopted' => $totalAdopted,
+                'available_now' => $availableNow,
+            ],
+        ]);
     }
 
     public function submitSurvey(Request $request, int $reminderId): JsonResponse
