@@ -1,42 +1,12 @@
 "use client";
 
 import { useState, Suspense } from "react";
-import { useAuth, type User } from "@/lib/auth-context";
-import {
-  ROUTES,
-  canAccessPath,
-  defaultAuthenticatedPath,
-  isProfileComplete,
-  isProtectedPath,
-} from "@/lib/routes";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useAuth } from "@/lib/auth-context";
+import { ROUTES } from "@/lib/routes";
 import Image from "next/image";
 import { Dog, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
-
-function resolvePostLoginPath(callback: string | null, user: User): string {
-  console.log("[resolvePostLoginPath] callback:", callback, "user.role:", user.role, "profile_completed_at:", user.profile_completed_at);
-  if (callback) {
-    const isPublicPetPage = callback.startsWith("/pet/");
-    const isAllowedProtectedPath =
-      isProtectedPath(callback) && canAccessPath(callback, user.role);
-
-    console.log("[resolvePostLoginPath] isPublicPetPage:", isPublicPetPage, "isAllowedProtectedPath:", isAllowedProtectedPath);
-
-    if (isPublicPetPage || isAllowedProtectedPath) {
-      console.log("[resolvePostLoginPath] returning callback:", callback);
-      return callback;
-    }
-  }
-
-  const defaultPath = defaultAuthenticatedPath(
-    user.role,
-    isProfileComplete(user.role, user.profile_completed_at),
-  );
-  console.log("[resolvePostLoginPath] returning default path:", defaultPath);
-  return defaultPath;
-}
 
 export default function SignInPage() {
   return (
@@ -58,8 +28,6 @@ function SignInForm() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { signIn } = useAuth();
-  const router = useRouter();
-  const searchParams = useSearchParams();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,9 +35,7 @@ function SignInForm() {
     setIsLoading(true);
 
     try {
-      const user = await signIn(email, password);
-      const callback = searchParams.get("callback");
-      router.replace(resolvePostLoginPath(callback, user));
+      await signIn(email, password);
     } catch (err: unknown) {
       if (err instanceof Error && err.message.includes("401")) {
         setError("Invalid email or password");

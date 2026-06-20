@@ -11,7 +11,7 @@ import {
   signinWithCallback,
 } from "@/lib/routes";
 import { usePathname, useRouter } from "next/navigation";
-import { ReactNode, useEffect, useMemo, useRef } from "react";
+import { ReactNode, useEffect, useMemo } from "react";
 
 function LoadingScreen() {
   return (
@@ -30,8 +30,6 @@ function resolveAccess(
   role: string | undefined,
   profileComplete: boolean,
 ): AccessState {
-  console.log("[resolveAccess]", { pathname, role, isAuthenticated, isLoading, profileComplete, onGuestPage: isGuestPath(pathname), needsOnboarding: requiresOnboarding(role, profileComplete), canAccess: canAccessPath(pathname, role) });
-
   if (isLoading) {
     return "loading";
   }
@@ -45,7 +43,7 @@ function resolveAccess(
   }
 
   if (onGuestPage) {
-    return "allowed";
+    return "redirecting";
   }
 
   if (needsOnboarding) {
@@ -101,7 +99,6 @@ export function AuthGuard({ children }: { children: ReactNode }) {
     }
 
     if (!target) return;
-    console.log("[AuthGuard] REDIRECTING", { from: pathname, to: target, role, isAuthenticated });
     router.replace(target);
   }, [access, isAuthenticated, pathname, profileComplete, role, router]);
 
