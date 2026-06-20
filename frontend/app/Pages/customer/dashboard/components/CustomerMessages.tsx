@@ -2,11 +2,14 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useAuth, ConversationItem, Message } from "@/lib/auth-context";
+import { getApiErrorMessage } from "@/lib/api-error";
 import { usePolling } from "@/lib/lib-polling";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { getApiErrorMessage } from "@/lib/api-error";
+import { toast } from "sonner";
 import {
   Send,
   MessageCircle,
@@ -79,8 +82,9 @@ export default function CustomerMessages() {
       await sendMessage(activeConversation.id, text);
       await loadMessages(activeConversation.id);
       await loadConversations();
-    } catch {
+    } catch (err) {
       setMessageInput(text);
+      toast.error(getApiErrorMessage(err, "Failed to send message."));
     }
   };
 

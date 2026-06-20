@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { ROUTES, defaultAuthenticatedPath, isProfileComplete } from "@/lib/routes";
 import api from "@/lib/api";
+import { getApiErrorMessage } from "@/lib/api-error";
 import { SiteHeader } from "@/components/site-header";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Controller, useForm } from "react-hook-form"
@@ -137,8 +138,8 @@ export default function OnboardingPage() {
           isProfileComplete(user?.role, user?.profile_completed_at),
         ),
       );
-    } catch {
-      toast.error("Could not save your profile. Please try again.");
+    } catch (err) {
+      toast.error(getApiErrorMessage(err, "Could not save your profile. Please try again."));
     }
   }
 

@@ -5,6 +5,7 @@ import { useAuth } from "@/lib/auth-context";
 import { Dog, Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ROUTES, signinWithCallback } from "@/lib/routes";
+import { getApiErrorMessage } from "@/lib/api-error";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -33,11 +34,7 @@ export default function RegistrationPage() {
       const callback = searchParams.get("callback");
       router.replace(callback ? signinWithCallback(callback) : ROUTES.signin);
     } catch (err: unknown) {
-      if (err instanceof Error && err.message.includes("422")) {
-        setError("Email already in use or invalid data.");
-      } else {
-        setError("Registration failed. Please try again.");
-      }
+      setError(getApiErrorMessage(err, "Registration failed. Please try again."));
     } finally {
       setIsLoading(false);
     }

@@ -9,6 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { PawPrint, Heart, MapPin, Users, MessageCircle } from "lucide-react";
 import { ApplyModal } from "@/app/components/landing/ApplyModal";
+import { getApiErrorMessage } from "@/lib/api-error";
 import { toast } from "sonner";
 
 const HOUSING_LABELS: Record<string, string> = {
@@ -102,8 +103,8 @@ const CustomerForYouCard = () => {
     try {
       await startConversation(pet.owner_id, pet.id);
       window.location.href = "/Pages/customer/dashboard?tab=messages";
-    } catch {
-      toast.error("Failed to start conversation.");
+    } catch (err) {
+      toast.error(getApiErrorMessage(err, "Failed to start conversation."));
     }
   };
 

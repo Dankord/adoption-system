@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import api from "@/lib/api";
+import { getApiErrorMessage } from "@/lib/api-error";
 
 interface ApplyModalProps {
   isOpen: boolean;
@@ -47,8 +48,8 @@ export function ApplyModal({ isOpen, onClose, petId, petName, questions, onSubmi
       toast.success("Application submitted successfully!");
       onSubmitted();
       onClose();
-    } catch {
-      toast.error("Failed to submit application.");
+    } catch (err) {
+      toast.error(getApiErrorMessage(err, "Failed to submit application."));
     } finally {
       setIsSubmitting(false);
     }

@@ -9,6 +9,7 @@ import { ApplyModal } from "@/app/components/landing/ApplyModal";
 import { PetService, mapApiPetToDisplay } from "@/lib/pet-service";
 import { isProfileComplete, normalizeRole } from "@/lib/routes";
 import api from "@/lib/api";
+import { getApiErrorMessage } from "@/lib/api-error";
 import { toast } from "sonner";
 
 export default function PetDetailPage() {
@@ -68,8 +69,8 @@ export default function PetDetailPage() {
       await startConversation(pet.ownerId, petId);
       const role = user?.role || "customer";
       window.location.href = `/Pages/${role}/dashboard?tab=messages`;
-    } catch {
-      toast.error("Failed to start conversation.");
+    } catch (err) {
+      toast.error(getApiErrorMessage(err, "Failed to start conversation."));
     }
   };
 

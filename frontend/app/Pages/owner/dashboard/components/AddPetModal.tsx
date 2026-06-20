@@ -30,6 +30,7 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { useAuth } from "@/lib/auth-context";
+import { getApiErrorMessage } from "@/lib/api-error";
 import { toast } from "sonner";
 
 const TEMPERAMENT_OPTIONS = [
@@ -185,8 +186,8 @@ export function AddPetModal({ isOpen, onClose, onPetAdded }: AddPetModalProps) {
       handleClose();
       onPetAdded();
       toast.success("Pet added successfully!");
-    } catch {
-      toast.error("Failed to add pet.");
+    } catch (err) {
+      toast.error(getApiErrorMessage(err, "Failed to add pet."));
     } finally {
       setIsSubmitting(false);
     }

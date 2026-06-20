@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import { getApiErrorMessage } from "@/lib/api-error";
 import { toast } from "sonner";
 
 const STATUS_STYLES: Record<string, string> = {
@@ -67,8 +68,8 @@ export default function OwnerApplications() {
           : prev
       );
       toast.success(`Application status updated to ${STATUS_LABELS[status]}`);
-    } catch {
-      toast.error("Failed to update application status.");
+    } catch (err) {
+      toast.error(getApiErrorMessage(err, "Failed to update application status."));
     } finally {
       setUpdatingId(null);
     }

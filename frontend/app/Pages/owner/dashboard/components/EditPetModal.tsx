@@ -32,6 +32,7 @@ import {
 } from "@/components/ui/select";
 import { useAuth } from "@/lib/auth-context";
 import type { Pet } from "@/lib/auth-context";
+import { getApiErrorMessage } from "@/lib/api-error";
 import { toast } from "sonner";
 
 const TEMPERAMENT_OPTIONS = [
@@ -208,8 +209,8 @@ const EditPetModal = ({ isOpen, onClose, pet }: EditPetModalProps) => {
       form.reset();
       onClose();
       toast.success("Pet updated successfully");
-    } catch {
-      toast.error("Failed to update pet");
+    } catch (err) {
+      toast.error(getApiErrorMessage(err, "Failed to update pet"));
     } finally {
       setIsSubmitting(false);
     }

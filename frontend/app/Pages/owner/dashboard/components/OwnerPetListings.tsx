@@ -7,6 +7,7 @@ import { AddPetModal } from "./AddPetModal";
 import { ViewPetModal } from "./ViewPetModal";
 import EditPetModal from "./EditPetModal";
 import type { FormValues as AddPetFormValues } from "./AddPetModal";
+import { getApiErrorMessage } from "@/lib/api-error";
 import { toast } from "sonner";
 
 const OWNER_PET_MAP = (pet: import("@/lib/auth-context").Pet): OwnerPet => ({
@@ -74,8 +75,8 @@ const OwnerPetListings = () => {
         await deletePet(selectedPet.id);
         setPets((prev) => prev.filter((p) => p.id !== selectedPet.id));
         toast.success("Pet deleted successfully");
-      } catch {
-        toast.error("Failed to delete pet");
+      } catch (err) {
+        toast.error(getApiErrorMessage(err, "Failed to delete pet"));
       } finally {
         setIsDeleteModalOpen(false);
         setSelectedPet(null);

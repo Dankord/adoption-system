@@ -6,6 +6,8 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { X } from "lucide-react";
+import { getApiErrorMessage } from "@/lib/api-error";
+import { toast } from "sonner";
 
 interface SurveyModalProps {
   isOpen: boolean;
@@ -61,8 +63,8 @@ export function SurveyModal({ isOpen, onClose, reminder, onSubmit }: SurveyModal
       await onSubmit(reminder.id, responses);
       setResponses({});
       onClose();
-    } catch {
-      // silently handle
+    } catch (err) {
+      toast.error(getApiErrorMessage(err, "Failed to submit survey."));
     } finally {
       setIsSubmitting(false);
     }

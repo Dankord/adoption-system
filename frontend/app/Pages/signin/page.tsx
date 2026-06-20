@@ -2,6 +2,7 @@
 
 import { useState, Suspense } from "react";
 import { useAuth } from "@/lib/auth-context";
+import { getApiErrorMessage } from "@/lib/api-error";
 import { ROUTES } from "@/lib/routes";
 import Image from "next/image";
 import { Dog, ArrowLeft } from "lucide-react";
@@ -37,11 +38,7 @@ function SignInForm() {
     try {
       await signIn(email, password);
     } catch (err: unknown) {
-      if (err instanceof Error && err.message.includes("401")) {
-        setError("Invalid email or password");
-      } else {
-        setError("Something went wrong. Please try again.");
-      }
+      setError(getApiErrorMessage(err, "Invalid email or password"));
     } finally {
       setIsLoading(false);
     }

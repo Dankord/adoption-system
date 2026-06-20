@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useAuth, type AdminUser } from "@/lib/auth-context";
+import { getApiErrorMessage } from "@/lib/api-error";
 import { toast } from "sonner";
 import {
   Table,
@@ -70,8 +71,8 @@ export default function AdminUsers() {
       await deleteAdminUser(id);
       setUsers((prev) => prev.filter((u) => u.id !== id));
       toast.success("User deleted successfully");
-    } catch {
-      toast.error("Failed to delete user");
+    } catch (err) {
+      toast.error(getApiErrorMessage(err, "Failed to delete user"));
     } finally {
       setDeletingId(null);
     }
@@ -114,8 +115,8 @@ export default function AdminUsers() {
       );
       setEditingUser(null);
       toast.success("User updated successfully");
-    } catch {
-      toast.error("Failed to update user");
+    } catch (err) {
+      toast.error(getApiErrorMessage(err, "Failed to update user"));
     }
   };
 

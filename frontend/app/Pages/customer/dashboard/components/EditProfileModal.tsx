@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useAuth } from "@/lib/auth-context";
+import { getApiErrorMessage } from "@/lib/api-error";
 import { toast } from "sonner";
 
 const editProfileSchema = z.object({
@@ -102,8 +103,8 @@ export default function EditProfileModal({ isOpen, onClose }: EditProfileModalPr
       toast.success("Profile updated successfully!");
       form.reset();
       onClose();
-    } catch {
-      toast.error("Failed to update profile.");
+    } catch (err) {
+      toast.error(getApiErrorMessage(err, "Failed to update profile."));
     } finally {
       setIsSubmitting(false);
     }

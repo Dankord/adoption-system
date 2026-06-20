@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/lib/auth-context";
+import { getApiErrorMessage } from "@/lib/api-error";
 import { toast } from "sonner";
 
 const formSchema = z.object({
@@ -70,8 +71,8 @@ export default function AddOwnerModal({ isOpen, onClose, onSuccess }: AddOwnerMo
       });
       toast.success("Owner account created successfully");
       onSuccess();
-    } catch {
-      toast.error("Failed to create owner account");
+    } catch (err) {
+      toast.error(getApiErrorMessage(err, "Failed to create owner account"));
     } finally {
       setIsSubmitting(false);
     }
