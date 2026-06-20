@@ -150,7 +150,7 @@ const EditPetModal = ({ isOpen, onClose, pet }: EditPetModalProps) => {
         breed: pet.breed,
         age: pet.age,
         gender: pet.gender as "Male" | "Female",
-        adoptionFee: pet.adoption_fee,
+        adoptionFee: Number(pet.adoption_fee ?? 0),
         vaccinated: pet.vaccinated,
         neutered: pet.neutered,
         specialNeeds: pet.special_needs ?? "",
