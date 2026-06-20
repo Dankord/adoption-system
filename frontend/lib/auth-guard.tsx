@@ -30,6 +30,8 @@ function resolveAccess(
   role: string | undefined,
   profileComplete: boolean,
 ): AccessState {
+  console.log("[resolveAccess]", { pathname, role, isAuthenticated, isLoading, profileComplete, onGuestPage: isGuestPath(pathname), needsOnboarding: requiresOnboarding(role, profileComplete), canAccess: canAccessPath(pathname, role) });
+
   if (isLoading) {
     return "loading";
   }
@@ -42,8 +44,6 @@ function resolveAccess(
     return onGuestPage ? "allowed" : "redirecting";
   }
 
-  // Authenticated users - allow them to stay (signin page handles post-login redirect)
-  // This prevents redirect loops between signin/dashboard
   if (onGuestPage) {
     return "allowed";
   }
@@ -90,6 +90,8 @@ export function AuthGuard({ children }: { children: ReactNode }) {
 
     if (!isAuthenticated) {
       target = signinWithCallback(pathname);
+    } else if (isGuestPath(pathname)) {
+      target = defaultAuthenticatedPath(role, profileComplete);
     } else if (requiresOnboarding(role, profileComplete)) {
       if (pathname.toLowerCase() === ROUTES.onboarding.toLowerCase()) return;
       target = ROUTES.onboarding;
@@ -99,6 +101,7 @@ export function AuthGuard({ children }: { children: ReactNode }) {
     }
 
     if (!target) return;
+    console.log("[AuthGuard] REDIRECTING", { from: pathname, to: target, role, isAuthenticated });
     router.replace(target);
   }, [access, isAuthenticated, pathname, profileComplete, role, router]);
 
