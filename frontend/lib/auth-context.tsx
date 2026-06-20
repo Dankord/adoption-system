@@ -227,57 +227,50 @@ function normalizeUser(user: User): User {
   };
 }
 
+function parseUserFromCookie(cookieValue: string | null): User | null {
+  if (!cookieValue) return null;
+  try {
+    const data = JSON.parse(cookieValue);
+    if (!data.id || !data.role) return null;
+    return normalizeUser({
+      id: data.id,
+      email: data.email,
+      role: data.role,
+      profile_completed_at: data.profile_completed_at || null,
+    } as User);
+  } catch {
+    return null;
+  }
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const userSetBySignIn = useRef(false);
 
   useEffect(() => {
     let mounted = true;
 
-    const checkAuth = async () => {
-      // Skip API call if user was already set by signIn()
-      // This prevents hanging when /api/user fails/hangs after login
-      if (userSetBySignIn.current) {
-        if (mounted) {
-          setIsLoading(false);
-        }
-        return;
-      }
+    // Read user data from cookie set by the proxy on login
+    const cookieValue = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("auth_user_data="))
+      ?.split("=")
+      .slice(1)
+      .join("=");
 
-      try {
-        const res = await api.get("/user");
-        if (mounted) {
-          setUser(normalizeUser(res.data.user));
-        }
-      } catch {
-        if (mounted && !userSetBySignIn.current) {
-          setUser(null);
-        }
-      } finally {
-        if (mounted) {
-          setIsLoading(false);
-        }
-      }
-    };
+    const storedUser = parseUserFromCookie(cookieValue ? decodeURIComponent(cookieValue) : null);
+    if (storedUser && mounted) {
+      setUser(storedUser);
+    }
 
-    const timeout = setTimeout(() => {
-      if (mounted && !userSetBySignIn.current) {
-        setUser(null);
-        setIsLoading(false);
-      }
-    }, 5000);
-
-    checkAuth();
+    setIsLoading(false);
 
     return () => {
       mounted = false;
-      clearTimeout(timeout);
     };
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    userSetBySignIn.current = true;
     const res = await api.post("/login", { email, password });
     const user = normalizeUser(res.data.user as User);
     setUser(user);

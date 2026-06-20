@@ -3,6 +3,7 @@ import type { NextRequest } from "next/server";
 
 const BACKEND_URL = process.env.BACKEND_URL ?? "https://backend.test";
 const AUTH_COOKIE = "auth_token";
+const USER_DATA_COOKIE = "auth_user_data";
 const TOKEN_MAX_AGE = 60 * 60 * 24 * 30; // 30 days
 
 type Ctx = { params: Promise<{ path: string[] }> };
@@ -29,7 +30,6 @@ async function proxy(request: NextRequest, ctx: Ctx) {
       body = isMultipart ? await request.blob() : await request.arrayBuffer();
     }
     const fetchHeaders = new Headers(headers);
-    // For multipart, set Content-Type AFTER body to preserve the boundary
     if (contentType) {
       fetchHeaders.set("Content-Type", contentType);
     }
@@ -68,7 +68,7 @@ async function proxy(request: NextRequest, ctx: Ctx) {
     );
   }
 
-const responseContentType = backendRes.headers.get("content-type") ?? "";
+  const responseContentType = backendRes.headers.get("content-type") ?? "";
   const isJson = responseContentType.includes("application/json");
   const payload: unknown = isJson
     ? await backendRes.json().catch(() => null)
@@ -85,8 +85,6 @@ const responseContentType = backendRes.headers.get("content-type") ?? "";
     segments === "login" || segments === "register";
   const isLogout = segments === "logout";
 
-  // Capture token from auth responses into an httpOnly cookie,
-  // and strip it from the body sent to the browser.
   if (
     isAuthEndpoint &&
     backendRes.ok &&
@@ -99,6 +97,8 @@ const responseContentType = backendRes.headers.get("content-type") ?? "";
       token: string;
     };
     const res = NextResponse.json(rest, { status: backendRes.status });
+
+    // Also set the auth_token cookie for future requests
     res.cookies.set({
       name: AUTH_COOKIE,
       value: issued,
@@ -108,6 +108,27 @@ const responseContentType = backendRes.headers.get("content-type") ?? "";
       path: "/",
       maxAge: TOKEN_MAX_AGE,
     });
+
+    // Set user_data cookie for client-side auth reconstruction
+    if (rest && typeof rest === "object" && "user" in rest) {
+      const userData = rest.user as Record<string, unknown>;
+      const userCookieValue = JSON.stringify({
+        id: userData.id,
+        email: userData.email,
+        role: userData.role,
+        profile_completed_at: userData.profile_completed_at,
+      });
+      res.cookies.set({
+        name: USER_DATA_COOKIE,
+        value: userCookieValue,
+        httpOnly: false,
+        sameSite: "lax",
+        secure: process.env.NODE_ENV === "production",
+        path: "/",
+        maxAge: TOKEN_MAX_AGE,
+      });
+    }
+
     return res;
   }
 
@@ -118,12 +139,36 @@ const responseContentType = backendRes.headers.get("content-type") ?? "";
         headers: { "Content-Type": responseContentType || "text/plain" },
       });
 
+  // Update auth_user_data cookie whenever we get user data back
+  if (res.cookies && payload && typeof payload === "object" && "user" in payload) {
+    const userData = (payload as Record<string, unknown>).user as Record<string, unknown> | null;
+    if (userData) {
+      const userCookieValue = JSON.stringify({
+        id: userData.id,
+        email: userData.email,
+        role: userData.role,
+        profile_completed_at: userData.profile_completed_at,
+      });
+      res.cookies.set({
+        name: USER_DATA_COOKIE,
+        value: userCookieValue,
+        httpOnly: false,
+        sameSite: "lax",
+        secure: process.env.NODE_ENV === "production",
+        path: "/",
+        maxAge: TOKEN_MAX_AGE,
+      });
+    }
+  }
+
   if (isLogout && backendRes.ok) {
     res.cookies.delete(AUTH_COOKIE);
+    res.cookies.delete(USER_DATA_COOKIE);
   }
 
   if (segments === "user" && backendRes.status === 401) {
     res.cookies.delete(AUTH_COOKIE);
+    res.cookies.delete(USER_DATA_COOKIE);
   }
 
   return res;
