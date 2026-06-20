@@ -258,7 +258,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .slice(1)
       .join("=");
 
-    const storedUser = parseUserFromCookie(cookieValue || null);
+    const storedUser = parseUserFromCookie(cookieValue ? decodeURIComponent(cookieValue) : null);
     if (storedUser && mounted) {
       setUser(storedUser);
     }
