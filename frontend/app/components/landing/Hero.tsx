@@ -50,7 +50,7 @@ export function Hero({ totalAdopted, availableNow }: HeroProps) {
 
           <div className="flex-1 relative">
             <img
-              src="https://paradepets.com/.image/NTowMDAwMDAwMDAwMDI3MjU5/happy-pit-bull.jpg?profile=share4-3"
+              src="https://paradepets.com/.image/NTowMDAwMDAwMDAwMjE3MjU5/happy-pit-bull.jpg?profile=share4-3"
               alt="Happy dog after adoption"
               className="w-full h-52 sm:h-64 object-cover"
             />
