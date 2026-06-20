@@ -16,20 +16,26 @@ import Link from "next/link";
 
 
 function resolvePostLoginPath(callback: string | null, user: User): string {
+  console.log("[resolvePostLoginPath] callback:", callback, "user.role:", user.role, "profile_completed_at:", user.profile_completed_at);
   if (callback) {
     const isPublicPetPage = callback.startsWith("/pet/");
     const isAllowedProtectedPath =
       isProtectedPath(callback) && canAccessPath(callback, user.role);
 
+    console.log("[resolvePostLoginPath] isPublicPetPage:", isPublicPetPage, "isAllowedProtectedPath:", isAllowedProtectedPath);
+
     if (isPublicPetPage || isAllowedProtectedPath) {
+      console.log("[resolvePostLoginPath] returning callback:", callback);
       return callback;
     }
   }
 
-  return defaultAuthenticatedPath(
+  const defaultPath = defaultAuthenticatedPath(
     user.role,
     isProfileComplete(user.role, user.profile_completed_at),
   );
+  console.log("[resolvePostLoginPath] returning default path:", defaultPath);
+  return defaultPath;
 }
 
 export default function SignInPage() {
