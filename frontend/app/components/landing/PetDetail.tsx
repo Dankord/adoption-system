@@ -36,7 +36,8 @@ interface PetDetailProps {
   canApply?: boolean;
   onApply?: () => void;
   ownerId?: number | null;
-  onMessageOwner?: () => void;  
+  onMessageOwner?: () => void;
+  userRole?: string;
 }
 
 const STATUS_STYLES: Record<string, { bg: string; text: string; dot: string }> = {
@@ -53,9 +54,11 @@ function ApplySection({
   onApply,
   ownerId,
   onMessageOwner,
+  userRole,
 }: PetDetailProps) {
   const petPath = `/pet/${pet.id}`;
   const isAvailable = pet.status === "Available";
+  const isOwnerOrAdmin = userRole === "owner" || userRole === "admin";
 
   if (!isAvailable) {
     return (
@@ -102,6 +105,10 @@ function ApplySection({
     );
   }
 
+  if (isOwnerOrAdmin) {
+    return null;
+  }
+
   return (
     <div className="space-y-2">
       <button
@@ -130,6 +137,7 @@ export function PetDetail({
   onApply,
   ownerId = null,
   onMessageOwner,
+  userRole,
 }: PetDetailProps) {
   const ss = STATUS_STYLES[pet.status] ?? STATUS_STYLES["Available"];
 
@@ -298,6 +306,7 @@ export function PetDetail({
                 onApply={onApply}
                 ownerId={ownerId}
                 onMessageOwner={onMessageOwner}
+                userRole={userRole}
               />
             </div>
           </div>

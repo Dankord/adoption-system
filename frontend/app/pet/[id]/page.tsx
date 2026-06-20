@@ -100,6 +100,7 @@ export default function PetDetailPage() {
         onApply={handleApply}
         ownerId={pet.ownerId}
         onMessageOwner={handleMessageOwner}
+        userRole={user?.role}
       />
       <ApplyModal
         isOpen={isApplyModalOpen}

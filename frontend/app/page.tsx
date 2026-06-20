@@ -26,9 +26,11 @@ export default function LandingPage() {
     specialNeeds?: boolean;
     temperament: string[];
   }>>([]);
+  const [totalAdopted, setTotalAdopted] = useState<number | undefined>(undefined);
+  const [availableNow, setAvailableNow] = useState<number | undefined>(undefined);
 
   useEffect(() => {
-    const fetchPets = async () => {
+    const fetchData = async () => {
       try {
         const apiPets = await PetService.getAllPublic();
         setPets(
@@ -51,9 +53,17 @@ export default function LandingPage() {
       } catch {
         setPets([]);
       }
+
+      try {
+        const stats = await PetService.getPublicStats();
+        setTotalAdopted(stats.total_adopted);
+        setAvailableNow(stats.available_now);
+      } catch {
+        // Keep default fallback values
+      }
     };
 
-    fetchPets();
+    fetchData();
   }, []);
 
   const handleNavigate = (page: string) => {
@@ -72,7 +82,7 @@ export default function LandingPage() {
     <div className="min-h-screen bg-[#FDF6EE]">
       <SiteHeader />
       <main>
-        <Hero />
+        <Hero totalAdopted={totalAdopted} availableNow={availableNow} />
         <HowItWorksTeaser onNavigate={handleNavigate} />
         <AvailablePets pets={pets} />
       </main>

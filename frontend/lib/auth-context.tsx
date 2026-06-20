@@ -263,6 +263,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(storedUser);
     }
 
+    // Validate stored user by calling /user endpoint
+    if (storedUser && mounted) {
+      refreshUser()
+        .then(() => {
+          // Successfully refreshed - user is valid
+        })
+        .catch(() => {
+          // Refresh failed - clear stale auth data
+          setUser(null);
+          // Delete auth cookies
+          document.cookie = "auth_token=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
+          document.cookie = "auth_user_data=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
+        });
+    }
+
     setIsLoading(false);
 
     return () => {

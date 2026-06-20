@@ -19,6 +19,7 @@ Route::post('/login', [AuthController::class, 'login']);
 // Public routes (must be before auth middleware group so they're matched first)
 Route::get('/pets', [PetController::class, 'publicIndex']);
 Route::get('/pets/{id}', [PetController::class, 'publicShow']);
+Route::get('/public-stats', [ApplicationController::class, 'publicStats']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);

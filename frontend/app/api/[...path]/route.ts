@@ -171,6 +171,28 @@ async function proxy(request: NextRequest, ctx: Ctx) {
     res.cookies.delete(USER_DATA_COOKIE);
   }
 
+  // Sync user data cookie from backend /user response
+  if (segments === "user" && backendRes.ok && isJson && payload && typeof payload === "object" && "user" in payload) {
+    const userData = (payload as Record<string, unknown>).user as Record<string, unknown> | null;
+    if (userData) {
+      const userCookieValue = JSON.stringify({
+        id: userData.id,
+        email: userData.email,
+        role: userData.role,
+        profile_completed_at: userData.profile_completed_at,
+      });
+      res.cookies.set({
+        name: USER_DATA_COOKIE,
+        value: userCookieValue,
+        httpOnly: false,
+        sameSite: "lax",
+        secure: process.env.NODE_ENV === "production",
+        path: "/",
+        maxAge: TOKEN_MAX_AGE,
+      });
+    }
+  }
+
   return res;
 }
 
