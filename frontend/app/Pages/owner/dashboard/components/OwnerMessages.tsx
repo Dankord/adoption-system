@@ -125,13 +125,13 @@ export default function OwnerMessages() {
   });
 
   return (
-    <div className="flex flex-col h-[calc(100vh-280px)] min-h-[500px]">
+    <div className="flex flex-col h-[600px] sm:h-[calc(100vh-280px)] min-h-[500px]">
       <h2 className="text-2xl font-semibold mb-4" style={{ fontFamily: "var(--font-dm-serif)" }}>
         Messages
       </h2>
 
-      <Card className="flex-1 overflow-hidden flex flex-col border-[#dabcac]/40">
-        <CardContent className="p-0 flex-1 flex">
+      <Card className="h-full overflow-hidden flex flex-col border-[#dabcac]/40">
+        <CardContent className="p-0 flex flex-1 flex-col sm:flex-row">
           {/* Sidebar */}
           <div
             className={`${isMobileChatOpen ? "hidden md:flex" : "flex"} flex-col w-full md:w-[380px] border-r border-[#dabcac]/30`}
