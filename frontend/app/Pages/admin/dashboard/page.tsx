@@ -40,16 +40,16 @@ export default function AdminDashboardPage() {
     <div className="min-h-screen bg-[#FDF6EE]">
       <SiteHeader />
 
-      <main className="max-w-7xl mx-auto px-4 py-8">
-        <div className="my-10">
-          <div className="flex gap-2 pb-2">
-            <h1 className="text-4xl font-bold" style={{ fontFamily: "var(--font-dm-serif)" }}>Admin Dashboard</h1>
-            <Shield height="30" width="30" />
+      <main className="max-w-7xl mx-auto px-4 py-6 sm:px-6 sm:py-8">
+        <div className="my-6 sm:my-10">
+          <div className="flex flex-col sm:flex-row gap-2 pb-2">
+            <h1 className="text-2xl sm:text-4xl font-bold" style={{ fontFamily: "var(--font-dm-serif)" }}>Admin Dashboard</h1>
+            <Shield height="24" width="24" className="hidden sm:block" />
           </div>
-          <p className="text-[#7A6150]">Manage users, oversee platform activity, and maintain system integrity.</p>
+          <p className="text-[#7A6150] text-sm sm:text-base">Manage users, oversee platform activity, and maintain system integrity.</p>
         </div>
 
-        <div className="flex gap-2 mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6 sm:mb-8">
           <AdminCards type="total_users" title={"Total Users"} />
           <AdminCards type="total_customers" title={"Customers"} />
           <AdminCards type="total_owners" title={"Owners"} />

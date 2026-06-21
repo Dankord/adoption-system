@@ -211,7 +211,7 @@ export function AddPetModal({ isOpen, onClose, onPetAdded }: AddPetModalProps) {
             variant="ghost"
             size="icon"
             onClick={handleClose}
-            className="size-8 rounded-full"
+            className="size-8 rounded-full cursor-pointer"
           >
             <X className="size-4" />
           </Button>
@@ -635,7 +635,7 @@ export function AddPetModal({ isOpen, onClose, onPetAdded }: AddPetModalProps) {
                       variant="ghost"
                       size="icon"
                       onClick={() => handleRemoveQuestion(index)}
-                      className="shrink-0 mt-0.5 text-red-500 hover:text-red-600 hover:bg-red-50"
+                      className="shrink-0 mt-0.5 text-red-500 hover:text-red-600 hover:bg-red-50 cursor-pointer"
                     >
                       <Trash2 className="size-4" />
                     </Button>
@@ -647,7 +647,7 @@ export function AddPetModal({ isOpen, onClose, onPetAdded }: AddPetModalProps) {
                   variant="outline"
                   size="sm"
                   onClick={handleAddQuestion}
-                  className="mt-2 gap-1.5 border-[#dabcac] text-[#7A6150] hover:bg-[#FFFAF4]"
+                  className="mt-2 gap-1.5 border-[#dabcac] text-[#7A6150] hover:bg-[#FFFAF4] cursor-pointer"
                 >
                   <Plus className="size-4" />
                   Add Question
@@ -661,7 +661,7 @@ export function AddPetModal({ isOpen, onClose, onPetAdded }: AddPetModalProps) {
           <Button
             variant="outline"
             onClick={handleClose}
-            className="border-[#dabcac] text-[#7A6150] hover:bg-[#FFFAF4]"
+            className="border-[#dabcac] text-[#7A6150] hover:bg-[#FFFAF4] cursor-pointer"
           >
             Cancel
           </Button>

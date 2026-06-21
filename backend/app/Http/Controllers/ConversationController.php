@@ -15,8 +15,8 @@ class ConversationController extends Controller
 
         $conversations = Conversation::with([
             'latestMessage',
-            'owner' => fn($q) => $q->select('id'),
-            'customer' => fn($q) => $q->select('id'),
+            'owner' => fn($q) => $q->with('customer:id,customer_name')->select('id'),
+            'customer' => fn($q) => $q->with('customer:id,customer_name')->select('id'),
             'pet' => fn($q) => $q->select('id', 'name'),
         ])
         ->where(function ($query) use ($user) {

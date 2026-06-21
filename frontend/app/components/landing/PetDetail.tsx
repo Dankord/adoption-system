@@ -145,7 +145,7 @@ export function PetDetail({
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <Link
         href={ROUTES.home}
-        className="flex items-center gap-2 text-[#7A6150] hover:text-[#C4622D] transition-colors mb-8 text-sm w-fit"
+        className="flex items-center gap-2 text-[#7A6150] hover:text-[#C4622D] transition-colors mb-8 text-sm w-fit cursor-pointer"
       >
         <ArrowLeft className="w-4 h-4" /> Back to Browse
       </Link>
@@ -158,7 +158,7 @@ export function PetDetail({
               <span className={`w-2 h-2 rounded-full ${ss.dot}`} />
               {pet.status}
             </div>
-            <button className="absolute top-4 right-4 w-9 h-9 bg-white/90 rounded-full flex items-center justify-center hover:bg-white transition-colors shadow-sm">
+            <button className="absolute top-4 right-4 w-9 h-9 bg-white/90 rounded-full flex items-center justify-center hover:bg-white transition-colors shadow-sm cursor-pointer">
               <Heart className="w-5 h-5 text-[#7A6150]" />
             </button>
           </div>

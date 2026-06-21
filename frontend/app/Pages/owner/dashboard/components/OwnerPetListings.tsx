@@ -34,6 +34,7 @@ const OwnerPetListings = () => {
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [selectedPet, setSelectedPet] = useState<OwnerPet | null>(null);
   const [apiSelectedPet, setApiSelectedPet] = useState<import("@/lib/auth-context").Pet | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const apiPetsMap = useRef<Map<number, import("@/lib/auth-context").Pet>>(new Map());
 
   const fetchPets = async () => {
@@ -70,6 +71,10 @@ const OwnerPetListings = () => {
   };
 
   const confirmDelete = async () => {
+    if(!selectedPet) return;
+
+    setIsDeleting(true);
+
     if (selectedPet) {
       try {
         await deletePet(selectedPet.id);
@@ -78,6 +83,7 @@ const OwnerPetListings = () => {
       } catch (err) {
         toast.error(getApiErrorMessage(err, "Failed to delete pet"));
       } finally {
+        setIsDeleting(false);
         setIsDeleteModalOpen(false);
         setSelectedPet(null);
       }
@@ -106,14 +112,14 @@ const OwnerPetListings = () => {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
         <div>
-          <h2 className="text-2xl font-semibold" style={{ fontFamily: "var(--font-dm-serif)" }}>Pet Listings</h2>
-          <p className="text-sm text-[#7A6150] pt-1">Manage the pets currently listed at your center.</p>
+          <h2 className="text-xl sm:text-2xl font-semibold" style={{ fontFamily: "var(--font-dm-serif)" }}>Pet Listings</h2>
+          <p className="text-xs sm:text-sm text-[#7A6150] pt-1">Manage the pets currently listed at your center.</p>
         </div>
         <button
           onClick={handleAdd}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#C4622D] text-white text-sm font-medium hover:opacity-90 transition-opacity"
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#C4622D] text-white text-sm font-medium hover:opacity-90 transition-opacity cursor-pointer"
         >
           <span className="text-lg leading-none">+</span> Add Pet
         </button>
@@ -161,19 +167,21 @@ const OwnerPetListings = () => {
             </p>
             <div className="flex justify-end gap-3">
               <button
+              disabled={isDeleting}
                 onClick={() => {
                   setIsDeleteModalOpen(false);
                   setSelectedPet(null);
                 }}
-                className="px-4 py-2 rounded-lg border border-[#dabcac] text-[#7A6150] hover:bg-[#FFFAF4] transition-colors"
+                className="px-4 py-2 rounded-lg border border-[#dabcac] text-[#7A6150] hover:bg-[#FFFAF4] transition-colors cursor-pointer"
               >
                 Cancel
               </button>
               <button
+                disabled={isDeleting}
                 onClick={confirmDelete}
-                className="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors"
+                className="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors cursor-pointer"
               >
-                Delete
+                {isDeleting ? "Deleting..." : "Delete"}
               </button>
             </div>
           </div>

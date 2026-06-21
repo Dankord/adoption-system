@@ -44,7 +44,7 @@ export function ViewPetModal({ isOpen, onClose, pet }: ViewPetModalProps) {
             variant="ghost"
             size="icon"
             onClick={onClose}
-            className="size-8 rounded-full"
+            className="size-8 rounded-full cursor-pointer"
           >
             <X className="size-4" />
           </Button>

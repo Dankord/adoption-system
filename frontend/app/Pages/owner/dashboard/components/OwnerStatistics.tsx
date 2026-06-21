@@ -111,13 +111,14 @@ const OwnerStatistics = () => {
   };
 
   if (isLoading) {
-    return (
-      <div>
-        <h2 className="text-2xl font-semibold mb-4" style={{ fontFamily: "var(--font-dm-serif)" }}>
-          Statistics
-        </h2>
-        <p className="text-s text-[#7A6150] pb-5">An overview of your center&apos;s activity and adoption trends.</p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+ return (
+    <div>
+      <h2 className="text-xl sm:text-2xl font-semibold mb-4" style={{ fontFamily: "var(--font-dm-serif)" }}>
+        Statistics
+      </h2>
+      <p className="text-xs sm:text-s text-[#7A6150] pb-5">An overview of your center&apos;s activity and adoption trends.</p>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {[1, 2, 3, 4].map((i) => (
             <Card key={i} className="w-full">
               <CardHeader>
@@ -133,14 +134,14 @@ const OwnerStatistics = () => {
     );
   }
 
-  return (
-    <div>
-      <h2 className="text-2xl font-semibold mb-4" style={{ fontFamily: "var(--font-dm-serif)" }}>
-        Statistics
-      </h2>
-      <p className="text-s text-[#7A6150] pb-5">An overview of your center&apos;s activity and adoption trends.</p>
+   return (
+      <div>
+        <h2 className="text-xl sm:text-2xl font-semibold mb-4" style={{ fontFamily: "var(--font-dm-serif)" }}>
+          Statistics
+        </h2>
+        <p className="text-xs sm:text-s text-[#7A6150] pb-5">An overview of your center&apos;s activity and adoption trends.</p>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {/* Pet Status Breakdown */}
         <Card className="w-full">
           <CardHeader>

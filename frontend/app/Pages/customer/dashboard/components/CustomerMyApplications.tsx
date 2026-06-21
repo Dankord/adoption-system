@@ -90,7 +90,7 @@ function ApplicationCard({
 
   return (
     <div className="bg-white rounded-2xl border border-[#dabcac] overflow-hidden hover:shadow-lg transition-all duration-300">
-      <div className="p-5">
+      <div className="p-4 sm:p-5">
         {/* Header: Pet info + Status badge */}
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
           <div className="flex-1">
@@ -180,10 +180,10 @@ const CustomerMyApplications = () => {
   if (isLoading) {
     return (
       <div>
-        <h2 className="text-2xl font-semibold mb-4" style={{ fontFamily: "var(--font-dm-serif)" }}>
+        <h2 className="text-xl sm:text-2xl font-semibold mb-4" style={{ fontFamily: "var(--font-dm-serif)" }}>
           My Applications
         </h2>
-        <p className="text-sm text-[#7A6150] pb-5">Track your adoption journey and pet care reminders all in one place.</p>
+        <p className="text-xs sm:text-sm text-[#7A6150] pb-5">Track your adoption journey and pet care reminders all in one place.</p>
         <div className="text-center py-12">
           <p className="text-[#7A6150]">Loading your applications...</p>
         </div>
@@ -193,10 +193,10 @@ const CustomerMyApplications = () => {
 
   return (
     <div>
-      <h2 className="text-2xl font-semibold mb-4" style={{ fontFamily: "var(--font-dm-serif)" }}>
+      <h2 className="text-xl sm:text-2xl font-semibold mb-4" style={{ fontFamily: "var(--font-dm-serif)" }}>
         My Applications
       </h2>
-      <p className="text-sm text-[#7A6150] pb-5">Track your adoption journey and pet care reminders all in one place.</p>
+      <p className="text-xs sm:text-sm text-[#7A6150] pb-5">Track your adoption journey and pet care reminders all in one place.</p>
 
       {applications.length === 0 ? (
         <div className="text-center py-12">

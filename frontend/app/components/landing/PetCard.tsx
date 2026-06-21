@@ -46,7 +46,7 @@ export function PetCard({ pet }: PetCardProps) {
         <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
         <button
           onClick={(e) => { e.stopPropagation(); setLiked(!liked); }}
-          className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 flex items-center justify-center hover:bg-white transition-colors shadow-sm"
+          className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 flex items-center justify-center hover:bg-white transition-colors shadow-sm cursor-pointer"
         >
           <Heart className={`w-4 h-4 transition-colors ${liked ? 'fill-rose-500 text-rose-500' : 'text-[#7A6150]'}`} />
         </button>
@@ -91,7 +91,7 @@ export function PetCard({ pet }: PetCardProps) {
 
         <Link
           href={petDetailPath(pet.id)}
-          className="mt-auto w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-[#C4622D] text-white text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed"
+          className="mt-auto w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-[#C4622D] text-white text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
           onClick={(e) => {
             if (pet.status === 'Adopted') e.preventDefault();
           }}

@@ -169,8 +169,8 @@ export interface ConversationItem {
   } | null;
   messages_count: number;
   unread_count: number;
-  owner: { id: number; customer: string | null; customer_name: string | null };
-  customer: { id: number; customer: string | null; customer_name: string | null };
+  owner: { id: number; customer: { id: number; customer_name: string | null } | null };
+  customer: { id: number; customer: { id: number; customer_name: string | null } | null };
   pet: { id: number; name: string | null } | null;
 }
 

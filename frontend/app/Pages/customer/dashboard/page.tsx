@@ -53,16 +53,16 @@ export default function CustomerDashboardPage() {
     <div className="min-h-screen bg-[#FDF6EE]">
       <SiteHeader />
 
-      <main className="max-w-7xl mx-auto px-4 py-8">
-        <div className="my-10">
-          <div className="flex gap-2 pb-2">
-          <h1 className="text-4xl font-bold" style={{ fontFamily: "var(--font-dm-serif)" }}>Welcome, {user?.customer?.customer_name}</h1>
-          <PawPrint height="30" width="30"/>
+      <main className="max-w-7xl mx-auto px-4 py-6 sm:px-6 sm:py-8">
+        <div className="my-6 sm:my-10">
+          <div className="flex flex-col sm:flex-row gap-2 pb-2">
+          <h1 className="text-2xl sm:text-4xl font-bold" style={{ fontFamily: "var(--font-dm-serif)" }}>Welcome, {user?.customer?.customer_name}</h1>
+          <PawPrint height="24" width="24" className="hidden sm:block"/>
           </div>
-          <p className="text-[#7A6150]">Track your adoption journey and pet care reminders all in one place.</p>
+          <p className="text-[#7A6150] text-sm sm:text-base">Track your adoption journey and pet care reminders all in one place.</p>
         </div>
 
-        <div className="flex gap-2 mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6 sm:mb-8">
           <CustomerCard type="applications_count" title={"Applications"} />
           <CustomerCard type="under_review_count" title={"Under Review"} />
           <CustomerCard type="approved_count" title={"Approved"} />

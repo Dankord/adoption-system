@@ -36,12 +36,12 @@ const CustomerCards = ({ title, type }: CustomerCardsProps) => {
     fetchStats();
   }, [type, getDashboardStats]);
 
-  return (
-    <div className="w-175">
+ return (
+    <div className="w-full">
       <Card>
         <CardContent>
-          <p className="text-xl">{isLoading ? "—" : count}</p>
-          <p className="text-s text-[#7A6150] pt-2">{title}</p>
+          <p className="text-lg sm:text-xl">{isLoading ? "—" : count}</p>
+          <p className="text-xs sm:text-s text-[#7A6150] pt-2">{title}</p>
         </CardContent>
       </Card>
     </div>

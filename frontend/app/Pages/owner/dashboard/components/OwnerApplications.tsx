@@ -89,10 +89,10 @@ export default function OwnerApplications() {
   if (isLoading) {
     return (
       <div>
-        <h2 className="text-2xl font-semibold mb-4" style={{ fontFamily: "var(--font-dm-serif)" }}>
+        <h2 className="text-xl sm:text-2xl font-semibold mb-4" style={{ fontFamily: "var(--font-dm-serif)" }}>
           Applicants
         </h2>
-        <p className="text-sm text-[#7A6150] pb-5">Review and update the status of incoming adoption applications.</p>
+        <p className="text-xs sm:text-sm text-[#7A6150] pb-5">Review and update the status of incoming adoption applications.</p>
         <div className="text-center py-12">
           <p className="text-[#7A6150]">Loading applications...</p>
         </div>
@@ -102,10 +102,10 @@ export default function OwnerApplications() {
 
   return (
     <div>
-      <h2 className="text-2xl font-semibold mb-4" style={{ fontFamily: "var(--font-dm-serif)" }}>
+      <h2 className="text-xl sm:text-2xl font-semibold mb-4" style={{ fontFamily: "var(--font-dm-serif)" }}>
         Applicants
       </h2>
-      <p className="text-sm text-[#7A6150] pb-5">Review and update the status of incoming adoption applications.</p>
+      <p className="text-xs sm:text-sm text-[#7A6150] pb-5">Review and update the status of incoming adoption applications.</p>
 
       {!applications || applications.length === 0 ? (
         <div className="text-center py-12">
@@ -123,8 +123,8 @@ export default function OwnerApplications() {
                 key={app.id}
                 className="bg-white rounded-2xl border border-[#dabcac] overflow-hidden hover:shadow-lg transition-all duration-300"
               >
-                <div className="p-5">
-                  <div className="flex items-start justify-between gap-4">
+                <div className="p-4 sm:p-5">
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-3">
                         <div className="w-10 h-10 rounded-full bg-[#C4622D]/10 flex items-center justify-center">
@@ -165,7 +165,7 @@ export default function OwnerApplications() {
 
                       <button
                         onClick={() => setExpandedId(isExpanded ? null : app.id)}
-                        className="flex items-center gap-1 text-xs text-[#7A6150]/60 hover:text-[#C4622D] transition-colors"
+                        className="flex items-center gap-1 text-xs text-[#7A6150]/60 hover:text-[#C4622D] transition-colors cursor-pointer"
                       >
                         {isExpanded ? "Hide" : "View"} answers
                         {isExpanded ? (

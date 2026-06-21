@@ -31,14 +31,14 @@ const tabs: TabItem[] = [
 
 export const MenuBar = ({ activeTab, onTabChange }: MenuBarProps) => {
   return (
-    <div className="inline-flex rounded-2xl w-full bg-white p-2 shadow-sm mb-5">
+    <div className="flex overflow-x-auto rounded-2xl w-full bg-white p-2 shadow-sm mb-5 gap-2 sm:gap-0 scrollbar-hide">
       {tabs.map((tab) => {
         const Icon = tab.icon;
         return (
           <button
             key={tab.key}
             onClick={() => onTabChange(tab.key)}
-            className="relative px-6 py-3 text-sm font-medium"
+            className="relative flex-shrink-0 px-4 sm:px-6 py-3 text-sm font-medium cursor-pointer"
           >
             {activeTab === tab.key && (
               <motion.div

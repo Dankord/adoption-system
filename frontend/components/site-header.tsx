@@ -19,11 +19,11 @@ export function SiteHeader() {
     : ROUTES.signin;
 
   return (
-    <header className="bg-[#FFFAF4] shadow-sm border-b border-[#dabcac]/40">
+    <header className="sticky top-0 z-50 bg-[#FFFAF4] shadow-sm border-b border-[#dabcac]/40 bg-[#FFFAF4]/70 background-blur-xl shadow-md">
       <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
         <Link
           href={ROUTES.home}
-          className="text-2xl text-gray-900"
+          className="cursor-pointer text-2xl text-gray-900"
           style={{ fontFamily: "var(--font-dm-serif)" }}
         >
           Adoptify
@@ -32,13 +32,13 @@ export function SiteHeader() {
         <div className="flex items-center gap-3 sm:gap-4">
           <Link
             href={ROUTES.home}
-            className="text-sm text-[#7A6150] hover:text-[#C4622D] transition-colors hidden sm:inline"
+            className="cursor-pointer text-sm text-[#7A6150] hover:text-[#C4622D] transition-colors hidden sm:inline"
           >
             Home
           </Link>
           <Link
             href={ROUTES.howItWorks}
-            className="text-sm text-[#7A6150] hover:text-[#C4622D] transition-colors hidden sm:inline"
+            className="cursor-pointer text-sm text-[#7A6150] hover:text-[#C4622D] transition-colors hidden sm:inline"
           >
             How it Works
           </Link>
@@ -49,13 +49,13 @@ export function SiteHeader() {
             <>
               <Link
                 href={dashboardHref}
-                className="text-sm bg-[#C4622D] text-white px-4 py-2 rounded-md hover:bg-amber-700 transition-colors"
+                className="cursor-pointer text-sm bg-[#C4622D] text-white px-4 py-2 rounded-md hover:bg-amber-700 transition-colors"
               >
                 Dashboard
               </Link>
               <button
                 onClick={() => signOut()}
-                className="text-sm text-[#C4622D] hover:text-amber-800 font-medium"
+                className="cursor-pointer text-sm text-[#C4622D] hover:text-amber-800 font-medium"
               >
                 Sign Out
               </button>
@@ -64,13 +64,13 @@ export function SiteHeader() {
             <>
               <Link
                 href={ROUTES.registration}
-                className="text-sm bg-[#C4622D] text-white px-4 py-2 rounded-md hover:bg-amber-700 transition-colors"
+                className="cursor-pointer text-sm bg-[#C4622D] text-white px-4 py-2 rounded-md hover:bg-amber-700 transition-colors"
               >
                 Register
               </Link>
               <Link
                 href={ROUTES.signin}
-                className="text-sm bg-[#C4622D] text-white px-4 py-2 rounded-md hover:bg-amber-700 transition-colors"
+                className="cursor-pointer text-sm bg-[#C4622D] text-white px-4 py-2 rounded-md hover:bg-amber-700 transition-colors"
               >
                 Sign In
               </Link>

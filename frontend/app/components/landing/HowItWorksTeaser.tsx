@@ -16,7 +16,7 @@ export function HowItWorksTeaser({ onNavigate }: HowItWorksTeaserProps) {
           </div>
           <button
             onClick={() => onNavigate('how-it-works')}
-            className="flex items-center gap-1.5 text-[#C4622D] text-sm font-medium hover:underline shrink-0"
+            className="flex items-center gap-1.5 text-[#C4622D] text-sm font-medium hover:underline shrink-0 cursor-pointer"
           >
             Full process guide <ArrowRight className="w-4 h-4" />
           </button>

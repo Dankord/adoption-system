@@ -125,10 +125,10 @@ const CustomerForYouCard = () => {
   if (pets.length === 0) {
     return (
       <div>
-        <h2 className="text-2xl font-semibold mb-4" style={{ fontFamily: "var(--font-dm-serif)" }}>
+        <h2 className="text-xl sm:text-2xl font-semibold mb-4" style={{ fontFamily: "var(--font-dm-serif)" }}>
           Pets that match your profile
         </h2>
-        <p className="text-s text-[#7A6150] pb-5">Based on your housing and experience.</p>
+        <p className="text-xs sm:text-s text-[#7A6150] pb-5">Based on your housing and experience.</p>
         <div className="text-center py-12">
           <p className="text-4xl mb-3">🐾</p>
           <p className="text-[#7A6150]">No matching pets found right now.</p>
@@ -140,10 +140,10 @@ const CustomerForYouCard = () => {
 
   return (
     <div>
-      <h2 className="text-2xl font-semibold mb-4" style={{ fontFamily: "var(--font-dm-serif)" }}>
+      <h2 className="text-xl sm:text-2xl font-semibold mb-4" style={{ fontFamily: "var(--font-dm-serif)" }}>
         Pets that match your profile
       </h2>
-      <p className="text-s text-[#7A6150] pb-5">Based on your housing and experience.</p>
+      <p className="text-xs sm:text-s text-[#7A6150] pb-5">Based on your housing and experience.</p>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {pets.map((pet) => {
@@ -231,18 +231,17 @@ const CustomerForYouCard = () => {
                     <Button
                       onClick={() => handleMessageOwner(pet)}
                       variant="outline"
-                      className="border-[#C4622D] text-[#C4622D] hover:bg-[#C4622D]/5 text-sm flex items-center justify-center gap-2"
+                      className="border-[#C4622D] text-[#C4622D] hover:bg-[#C4622D]/5 text-sm flex items-center justify-center gap-2 cursor-pointer"
                     >
                       <MessageCircle className="w-4 h-4" />
                       Message Owner
                     </Button>
                   </div>
                   {pet.owner_id && !hasApplied && (
-                    
                     <Button
                       onClick={() => handleApply(pet)}
                       disabled={hasApplied}
-                      className={`bg-[#C4622D] hover:bg-amber-700 w-full text-sm ${hasApplied ? "opacity-50 cursor-not-allowed" : ""}`}
+                      className={`bg-[#C4622D] hover:bg-amber-700 w-full text-sm ${hasApplied ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
                     >
                       {hasApplied ? "Applied" : "Apply Now"}
                     </Button>

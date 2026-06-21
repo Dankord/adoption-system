@@ -114,7 +114,7 @@ export default function OwnerMessages() {
   };
 
   const getOtherPartyName = (conv: ConversationItem) => {
-    return conv.customer?.customer_name || "Customer";
+    return conv.customer?.customer?.customer_name || "Customer";
   };
 
   const filteredConversations = conversations.filter((conv) => {
@@ -169,7 +169,7 @@ export default function OwnerMessages() {
                 <button
                   key={conv.id}
                   onClick={() => selectConversation(conv)}
-                  className={`w-full text-left p-4 border-b border-[#dabcac]/10 hover:bg-[#EAD8C6]/20 transition-colors ${
+                  className={`w-full text-left p-4 border-b border-[#dabcac]/10 hover:bg-[#EAD8C6]/20 transition-colors cursor-pointer ${
                     activeConversation?.id === conv.id
                       ? "bg-[#EAD8C6]/40"
                       : ""
@@ -227,7 +227,7 @@ export default function OwnerMessages() {
                   <Button
                     variant="ghost"
                     size="icon-sm"
-                    className="md:hidden"
+                    className="md:hidden cursor-pointer"
                     onClick={() => setIsMobileChatOpen(false)}
                   >
                     <ChevronLeft size={20} />
@@ -245,9 +245,6 @@ export default function OwnerMessages() {
                       </p>
                     )}
                   </div>
-                  <Button variant="ghost" size="icon-sm">
-                    <MoreVertical size={16} className="text-[#7A6150]/40" />
-                  </Button>
                 </div>
 
                 {/* Messages */}
@@ -304,13 +301,6 @@ export default function OwnerMessages() {
                 {/* Message input */}
                 <div className="p-4 border-t border-[#dabcac]/20 bg-white/50">
                   <div className="flex gap-2">
-                    <Button
-                      variant="ghost"
-                      size="icon-sm"
-                      className="flex-shrink-0 text-[#7A6150]/50"
-                    >
-                      <Paperclip size={18} />
-                    </Button>
                     <Textarea
                       placeholder="Type a message..."
                       value={messageInput}
@@ -323,7 +313,7 @@ export default function OwnerMessages() {
                       onClick={handleSendMessage}
                       disabled={!messageInput.trim()}
                       size="icon-sm"
-                      className="flex-shrink-0"
+                      className="flex-shrink-0 cursor-pointer"
                     >
                       <Send size={16} />
                     </Button>
