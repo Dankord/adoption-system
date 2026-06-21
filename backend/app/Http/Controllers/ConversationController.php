@@ -15,8 +15,8 @@ class ConversationController extends Controller
 
         $conversations = Conversation::with([
             'latestMessage',
-            'owner' => fn($q) => $q->with('customer:id,customer_name')->select('id'),
-            'customer' => fn($q) => $q->with('customer:id,customer_name')->select('id'),
+            'owner' => fn($q) => $q->with('customer:id,customer_name'),
+            'customer' => fn($q) => $q->with('customer:id,customer_name'),
             'pet' => fn($q) => $q->select('id', 'name'),
         ])
         ->where(function ($query) use ($user) {
@@ -110,7 +110,7 @@ class ConversationController extends Controller
 
         $conversation->update(['last_message_at' => now()]);
 
-        return response()->json(['message' => $message->load('sender')], 201);
+        return response()->json(['message' => $message->load('sender.customer:id,customer_name')], 201);
     }
 
     public function unreadCount(Request $request): JsonResponse

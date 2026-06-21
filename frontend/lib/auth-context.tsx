@@ -151,7 +151,7 @@ export interface Message {
   sender_id: number;
   body: string;
   is_read: boolean;
-  sender: { customer: string | null } | { customer_name: string | null };
+  sender: { id: number; customer: { id: number; customer_name: string | null } | null } | { id: number; customer_name: string | null };
   created_at: string;
 }
 
