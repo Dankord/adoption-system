@@ -83,7 +83,7 @@ export function AvailablePets({ pets }: AvailablePetsProps) {
         <div className="mb-6 p-4 bg-white border border-[#dabcac] rounded-2xl">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2"><SlidersHorizontal className="w-4 h-4 text-[#C4622D]" /> Filter Options</h3>
-            <button onClick={() => { setSelectedGender('All'); setVaccinated(false); setNeutered(false); setSelectedTemps([]); }} className="text-xs text-[#7A6150] hover:text-[#C4622D] transition-colors">Clear all</button>
+            <button onClick={() => { setSelectedGender('All'); setVaccinated(false); setNeutered(false); setSelectedTemps([]); }} className="cursor-pointer text-xs text-[#7A6150] hover:text-[#C4622D] transition-colors">Clear all</button>
           </div>
           <div className="grid sm:grid-cols-3 gap-4">
             <div>

@@ -239,13 +239,13 @@ function HowItWorksPage({ onNavigate }: { onNavigate: (page: string) => void }) 
           <div className="flex flex-wrap gap-3 justify-center">
             <button
               onClick={() => onNavigate('home')}
-              className="flex items-center gap-2 px-6 py-3 bg-white text-[#C4622D] rounded-xl font-medium text-sm hover:opacity-90 transition-opacity"
+              className="flex items-center gap-2 px-6 py-3 bg-white text-[#C4622D] rounded-xl font-medium text-sm hover:opacity-90 transition-opacity cursor-pointer"
             >
               Browse Available Pets <ArrowRight className="w-4 h-4" />
             </button>
             <button
               onClick={() => onNavigate('register')}
-              className="px-6 py-3 bg-white/15 text-white border border-white/30 rounded-xl font-medium text-sm hover:bg-white/25 transition-colors"
+              className="px-6 py-3 bg-white/15 text-white border border-white/30 rounded-xl font-medium text-sm hover:bg-white/25 transition-colors cursor-pointer"
             >
               Create Account
             </button>

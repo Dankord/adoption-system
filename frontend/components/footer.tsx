@@ -76,7 +76,7 @@ export function Footer({ onNavigate }: FooterProps) {
                 href="https://maps.google.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="absolute bottom-3 right-3 flex items-center gap-1.5 px-3 py-1.5 bg-white/15 hover:bg-white/25 border border-white/20 rounded-lg text-white text-xs transition-colors"
+                className="cursor-pointer absolute bottom-3 right-3 flex items-center gap-1.5 px-3 py-1.5 bg-white/15 hover:bg-white/25 border border-white/20 rounded-lg text-white text-xs transition-colors"
               >
                 Open in Maps <ExternalLink className="w-3 h-3" />
               </a>
@@ -144,7 +144,7 @@ export function Footer({ onNavigate }: FooterProps) {
                 { label: 'Sign In', page: 'sign-in' },
               ].map(link => (
                 <li key={link.label}>
-                  <button onClick={() => onNavigate(link.page)} className="text-white/60 hover:text-white text-sm transition-colors flex items-center gap-1.5 group">
+                  <button onClick={() => onNavigate(link.page)} className="cursor-pointer text-white/60 hover:text-white text-sm transition-colors flex items-center gap-1.5 group">
                     <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 -ml-4 group-hover:ml-0 transition-all" />
                     {link.label}
                   </button>
@@ -164,7 +164,7 @@ export function Footer({ onNavigate }: FooterProps) {
                 'Corporate Partnerships',
               ].map(label => (
                 <li key={label}>
-                  <button className="text-white/60 hover:text-white text-sm transition-colors flex items-center gap-1.5 group">
+                  <button className="cursor-pointer text-white/60 hover:text-white text-sm transition-colors flex items-center gap-1.5 group">
                     <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 -ml-4 group-hover:ml-0 transition-all" />
                     {label}
                   </button>
@@ -182,7 +182,7 @@ export function Footer({ onNavigate }: FooterProps) {
                 placeholder="your@email.com"
                 className="w-full px-3 py-2.5 rounded-xl text-sm bg-white/10 text-white placeholder:text-white/30 border border-white/10 focus:outline-none focus:ring-2 focus:ring-[#C4622D]/50"
               />
-              <button className="w-full py-2.5 rounded-xl bg-[#C4622D] text-white text-sm font-medium hover:opacity-90 transition-opacity">
+              <button className="cursor-pointer w-full py-2.5 rounded-xl bg-[#C4622D] text-white text-sm font-medium hover:opacity-90 transition-opacity">
                 Subscribe
               </button>
             </div>
@@ -194,7 +194,7 @@ export function Footer({ onNavigate }: FooterProps) {
         <p className="text-white/30 text-xs">© 2026 Adoptify. All rights reserved.</p>
         <div className="flex gap-5">
           {['Privacy Policy', 'Terms of Service', 'Cookie Policy'].map(l => (
-            <button key={l} className="text-white/30 hover:text-white/60 text-xs transition-colors">{l}</button>
+            <button key={l} className="cursor-pointer text-white/30 hover:text-white/60 text-xs transition-colors">{l}</button>
           ))}
         </div>
       </div>

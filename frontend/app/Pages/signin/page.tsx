@@ -70,7 +70,7 @@ function SignInForm() {
         <div className="w-full flex justify-start mb-10">
           <Link
             href={ROUTES.home}
-            className="text-sm text-[#7A6150] hover:text-gray-900 gap-2 flex items-center"
+            className="cursor-pointer text-sm text-[#7A6150] hover:text-gray-900 gap-2 flex items-center"
           >
             <ArrowLeft height="15" width="15" /> Back to home
           </Link>
@@ -116,7 +116,7 @@ function SignInForm() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent pr-10 bg-[#F2E8DB]"
                   placeholder="you@example.com"
                 />
               </div>
@@ -141,7 +141,7 @@ function SignInForm() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 text-gray-500 hover:text-gray-700"
+                    className="absolute right-3 cursor-pointer text-gray-500 hover:text-gray-700"
                   >
                     {showPassword ? (
                       <EyeOff size={18} />
@@ -165,7 +165,7 @@ function SignInForm() {
               Don&apos;t have an account?{" "}
               <a
                 href={ROUTES.registration}
-                className="text-[#C4622D] font-medium hover:underline"
+                className="text-[#C4622D] font-medium hover:underline cursor-pointer"
               >
                 Register here
               </a>

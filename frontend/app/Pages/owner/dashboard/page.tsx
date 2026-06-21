@@ -46,16 +46,16 @@ export default function OwnerDashboardPage() {
     <div className="min-h-screen bg-[#FDF6EE]">
       <SiteHeader />
 
-      <main className="max-w-7xl mx-auto px-4 py-8">
-        <div className="my-10">
-          <div className="flex gap-2 pb-2">
-            <h1 className="text-4xl font-bold" style={{ fontFamily: "var(--font-dm-serif)" }}>Center Dashboard</h1>
-            <PawPrint height="30" width="30" />
+      <main className="max-w-7xl mx-auto px-4 py-6 sm:px-6 sm:py-8">
+        <div className="my-6 sm:my-10">
+          <div className="flex flex-col sm:flex-row gap-2 pb-2">
+            <h1 className="text-2xl sm:text-4xl font-bold" style={{ fontFamily: "var(--font-dm-serif)" }}>Center Dashboard</h1>
+            <PawPrint height="24" width="24" className="hidden sm:block" />
           </div>
-          <p className="text-[#7A6150]">Manage your center&apos;s pets, applicants, and adoption activity in one place.</p>
+          <p className="text-[#7A6150] text-sm sm:text-base">Manage your center&apos;s pets, applicants, and adoption activity in one place.</p>
         </div>
 
-        <div className="flex gap-2 mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6 sm:mb-8">
           <OwnerCards type="pets_count" title={"Listed Pets"} />
           <OwnerCards type="pending_count" title={"Pending Review"} />
           <OwnerCards type="adopted_this_month" title={"Adopted This Month"} />

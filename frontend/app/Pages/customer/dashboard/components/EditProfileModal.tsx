@@ -128,7 +128,7 @@ export default function EditProfileModal({ isOpen, onClose }: EditProfileModalPr
             variant="ghost"
             size="icon"
             onClick={onClose}
-            className="size-8 rounded-full"
+            className="size-8 rounded-full cursor-pointer"
           >
             <X className="size-4" />
           </Button>
@@ -228,16 +228,16 @@ export default function EditProfileModal({ isOpen, onClose }: EditProfileModalPr
 
         <div className="flex justify-end gap-3 p-6 border-t border-[#dabcac]">
           <Button
-            variant="outline"
-            onClick={onClose}
-            className="border-[#dabcac] text-[#7A6150] hover:bg-[#FFFAF4]"
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={handleSubmitForm}
+             variant="outline"
+             onClick={onClose}
+             className="border-[#dabcac] text-[#7A6150] hover:bg-[#FFFAF4] cursor-pointer"
+           >
+             Cancel
+           </Button>
+           <Button
+             onClick={handleSubmitForm}
             disabled={isSubmitting}
-            className="bg-[#C4622D] hover:bg-amber-700"
+            className="bg-[#C4622D] hover:bg-amber-700 cursor-pointer"
           >
             {isSubmitting ? "Saving..." : "Save Changes"}
           </Button>

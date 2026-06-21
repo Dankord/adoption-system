@@ -203,7 +203,7 @@ export default function OnboardingPage() {
                   window.scrollTo({ top: 0, behavior: "smooth" });
                 }
               }}
-              className={`flex items-center gap-2 transition-opacity ${index <= currentStep ? "opacity-100" : "opacity-40 cursor-pointer"}`}
+              className={`flex items-center gap-2 transition-opacity ${index <= currentStep ? "opacity-100 cursor-pointer" : "opacity-40 cursor-pointer"}`}
             >
               <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium transition-colors ${index < currentStep
                 ? "bg-[#7A6150] text-white"
@@ -535,13 +535,13 @@ export default function OnboardingPage() {
           </CardContent>
           <CardFooter className="flex justify-between pt-4">
             {currentStep > 0 ? (
-              <Button variant="outline" onClick={handleBack} className="p-5 border border-[#ddc0b1] ">
+              <Button variant="outline" onClick={handleBack} className="p-5 border border-[#ddc0b1] cursor-pointer">
                 Back
               </Button>
             ) : (
               <div />
             )}
-            <Button onClick={handleNext} className="bg-[#C4622D] p-5 hover:bg-amber-700">
+            <Button onClick={handleNext} className="bg-[#C4622D] p-5 hover:bg-amber-700 cursor-pointer">
               {currentStep === steps.length - 1 ? "Complete Profile" : "Continue"}
             </Button>
           </CardFooter>

@@ -96,7 +96,7 @@ export default function AddOwnerModal({ isOpen, onClose, onSuccess }: AddOwnerMo
             variant="ghost"
             size="icon"
             onClick={onClose}
-            className="size-8 rounded-full"
+            className="size-8 rounded-full cursor-pointer"
           >
             <X className="size-4" />
           </Button>
@@ -159,14 +159,14 @@ export default function AddOwnerModal({ isOpen, onClose, onSuccess }: AddOwnerMo
                 type="button"
                 variant="outline"
                 onClick={onClose}
-                className="flex-1"
+                className="flex-1 cursor-pointer"
                 disabled={isSubmitting}
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
-                className="flex-1 bg-[#C4622D] hover:bg-[#A8501F] text-white"
+                className="flex-1 bg-[#C4622D] hover:bg-[#A8501F] text-white cursor-pointer"
                 disabled={isSubmitting || !isValid}
               >
                 <UserPlus className="w-4 h-4 mr-1" />

@@ -65,7 +65,7 @@ export default function RegistrationPage() {
         <div className="w-full flex justify-start mb-10">
           <Link
             href={ROUTES.home}
-            className="text-sm text-[#7A6150] hover:text-gray-900 gap-2 flex items-center"
+            className="cursor-pointer text-sm text-[#7A6150] hover:text-gray-900 gap-2 flex items-center"
           >
             <ArrowLeft height="15" width="15" /> Back to home
           </Link>
@@ -135,7 +135,7 @@ export default function RegistrationPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 text-gray-500 hover:text-gray-700"
+                    className="absolute right-3 cursor-pointer text-gray-500 hover:text-gray-700"
                   >
                     {showPassword ? (
                       <EyeOff size={18} />
@@ -159,7 +159,7 @@ export default function RegistrationPage() {
               Already have an account?{" "}
               <a
                 href={ROUTES.signin}
-                className="text-[#C4622D] font-medium hover:underline"
+                className="text-[#C4622D] font-medium hover:underline cursor-pointer"
               >
                 Sign in
               </a>

@@ -200,7 +200,7 @@ const CustomerPetCare = () => {
                         <Button
                           size="sm"
                           onClick={() => handleOpenSurvey(reminder)}
-                          className="rounded-4xl bg-[#C4622D] hover:bg-[#b05525] text-xs px-3 h-8"
+                          className="rounded-4xl bg-[#C4622D] hover:bg-[#b05525] text-xs px-3 h-8 cursor-pointer"
                         >
                           Take Survey
                         </Button>
@@ -211,7 +211,7 @@ const CustomerPetCare = () => {
                           size="sm"
                           onClick={() => handleOpenSurvey(reminder)}
                           variant="outline"
-                          className="rounded-4xl text-xs px-3 h-8 border-[#dabcac] text-[#C4622D] hover:bg-[#FDF6EE]"
+                          className="rounded-4xl text-xs px-3 h-8 border-[#dabcac] text-[#C4622D] hover:bg-[#FDF6EE] cursor-pointer"
                         >
                           Preview
                         </Button>

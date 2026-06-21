@@ -50,21 +50,21 @@ export function OwnerPetCard({ pet, onEdit, onDelete, onView }: OwnerPetCardProp
         <div className="absolute top-3 right-3 flex gap-1.5">
           <button
             onClick={(e) => { e.stopPropagation(); onView(pet); }}
-            className="w-8 h-8 rounded-full bg-white/90 flex items-center justify-center hover:bg-white transition-colors shadow-sm"
+            className="w-8 h-8 rounded-full bg-white/90 flex items-center justify-center hover:bg-white transition-colors shadow-sm cursor-pointer"
             title="View details"
           >
             <Eye className="w-4 h-4 text-[#7A6150]" />
           </button>
           <button
             onClick={(e) => { e.stopPropagation(); onEdit(pet); }}
-            className="w-8 h-8 rounded-full bg-white/90 flex items-center justify-center hover:bg-white transition-colors shadow-sm"
+            className="w-8 h-8 rounded-full bg-white/90 flex items-center justify-center hover:bg-white transition-colors shadow-sm cursor-pointer"
             title="Edit pet"
           >
             <Edit className="w-4 h-4 text-[#7A6150]" />
           </button>
           <button
             onClick={(e) => { e.stopPropagation(); onDelete(pet); }}
-            className="w-8 h-8 rounded-full bg-white/90 flex items-center justify-center hover:bg-red-50 transition-colors shadow-sm"
+            className="w-8 h-8 rounded-full bg-white/90 flex items-center justify-center hover:bg-red-50 transition-colors shadow-sm cursor-pointer"
             title="Delete pet"
           >
             <Trash2 className="w-4 h-4 text-red-500" />
@@ -104,13 +104,13 @@ export function OwnerPetCard({ pet, onEdit, onDelete, onView }: OwnerPetCardProp
         <div className="mt-auto flex gap-2">
           <button
             onClick={() => onView(pet)}
-            className="flex-1 py-2 rounded-xl bg-[#C4622D] text-white text-sm font-medium hover:opacity-90 transition-opacity"
+            className="flex-1 py-2 rounded-xl bg-[#C4622D] text-white text-sm font-medium hover:opacity-90 transition-opacity cursor-pointer"
           >
             View
           </button>
           <button
             onClick={() => onEdit(pet)}
-            className="flex-1 py-2 rounded-xl border border-[#dabcac] text-[#7A6150] text-sm font-medium hover:bg-[#FFFAF4] transition-colors"
+            className="flex-1 py-2 rounded-xl border border-[#dabcac] text-[#7A6150] text-sm font-medium hover:bg-[#FFFAF4] transition-colors cursor-pointer"
           >
             Edit
           </button>

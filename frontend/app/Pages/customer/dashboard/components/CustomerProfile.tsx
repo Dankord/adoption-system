@@ -74,7 +74,7 @@ export default function CustomerProfile({ onEdit }: CustomerProfileProps) {
         </div>
         <Button
           onClick={onEdit}
-          className="bg-[#C4622D] hover:bg-amber-700"
+          className="bg-[#C4622D] hover:bg-amber-700 cursor-pointer"
           size="sm"
         >
           Edit Profile

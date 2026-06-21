@@ -145,7 +145,7 @@ export default function AdminUsers() {
           </div>
           <Button
             onClick={() => setIsAddOwnerModalOpen(true)}
-            className="bg-[#C4622D] hover:bg-[#A8501F] text-white"
+            className="bg-[#C4622D] hover:bg-[#A8501F] text-white cursor-pointer"
           >
             <Plus className="w-4 h-4 mr-1" />
             Add Owner
@@ -158,7 +158,7 @@ export default function AdminUsers() {
     );
   }
 
-  return (
+ return (
     <div>
       <AddOwnerModal
         isOpen={isAddOwnerModalOpen}
@@ -169,34 +169,34 @@ export default function AdminUsers() {
         }}
       />
 
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
         <div>
-          <h2 className="text-2xl font-semibold" style={{ fontFamily: "var(--font-dm-serif)" }}>
+          <h2 className="text-xl sm:text-2xl font-semibold" style={{ fontFamily: "var(--font-dm-serif)" }}>
             Users
           </h2>
-          <p className="text-sm text-[#7A6150] pb-2">Manage all platform users and their roles.</p>
+          <p className="text-xs sm:text-sm text-[#7A6150] pb-2">Manage all platform users and their roles.</p>
         </div>
         <Button
           onClick={() => setIsAddOwnerModalOpen(true)}
-          className="bg-[#C4622D] hover:bg-[#A8501F] text-white"
-        >
-          <UserPlus className="w-4 h-4 mr-1" />
-          Add Owner
-        </Button>
-      </div>
+          className="bg-[#C4622D] hover:bg-[#A8501F] text-white cursor-pointer"
+         >
+           <UserPlus className="w-4 h-4 mr-1" />
+           Add Owner
+         </Button>
+       </div>
 
-      <div className="relative mb-4">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#7A6150]/60" />
-        <Input
-          type="text"
-          placeholder="Search by email, name, or role..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-10 bg-white"
-        />
-      </div>
+       <div className="relative mb-4">
+         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#7A6150]/60" />
+         <Input
+           type="text"
+           placeholder="Search by email, name, or role..."
+           value={searchQuery}
+           onChange={(e) => setSearchQuery(e.target.value)}
+           className="pl-10 bg-white"
+         />
+       </div>
 
-      <div className="bg-white rounded-2xl border border-[#dabcac] overflow-hidden">
+       <div className="bg-white rounded-2xl border border-[#dabcac] overflow-hidden">
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
@@ -258,15 +258,16 @@ export default function AdminUsers() {
                             <Button
                               size="sm"
                               onClick={handleSaveEdit}
-                              className="bg-[#4A7C59] hover:bg-[#3D6A4A] text-white"
+                              className="bg-[#4A7C59] hover:bg-[#3D6A4A] text-white cursor-pointer"
                             >
                               <Save className="w-3.5 h-3.5" />
                             </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={handleCancelEdit}
-                            >
+                             <Button
+                               size="sm"
+                               variant="outline"
+                               onClick={handleCancelEdit}
+                               className="cursor-pointer"
+                             >
                               <X className="w-3.5 h-3.5" />
                             </Button>
                           </div>
@@ -306,7 +307,7 @@ export default function AdminUsers() {
                               size="sm"
                               variant="outline"
                               onClick={() => handleStartEdit(user)}
-                              className="h-8 w-8 p-0"
+                              className="h-8 w-8 p-0 cursor-pointer"
                             >
                               <Edit2 className="w-3.5 h-3.5" />
                             </Button>
@@ -315,7 +316,7 @@ export default function AdminUsers() {
                               variant="outline"
                               onClick={() => handleDelete(user.id)}
                               disabled={deletingId === user.id}
-                              className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50"
+                              className="h-8 w-8 p-0 cursor-pointer text-red-500 hover:text-red-700 hover:bg-red-50"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
                             </Button>

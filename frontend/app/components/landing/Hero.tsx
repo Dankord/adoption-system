@@ -68,7 +68,7 @@ export function Hero({ totalAdopted, availableNow }: HeroProps) {
 
         <Link
           href="#pet-grid"
-          className="inline-flex items-center gap-2 px-7 py-3.5 bg-[#C4622D] text-white rounded-full font-medium hover:opacity-90 transition-opacity shadow-md"
+          className="cursor-pointer inline-flex items-center gap-2 px-7 py-3.5 bg-[#C4622D] text-white rounded-full font-medium hover:opacity-90 transition-opacity shadow-md"
         >
           Browse All Pets <ArrowRight className="w-4 h-4" />
         </Link>

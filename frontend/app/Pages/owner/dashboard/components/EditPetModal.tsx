@@ -234,7 +234,7 @@ const EditPetModal = ({ isOpen, onClose, pet }: EditPetModalProps) => {
             variant="ghost"
             size="icon"
             onClick={onClose}
-            className="size-8 rounded-full"
+            className="size-8 rounded-full cursor-pointer"
           >
             <X className="size-4" />
           </Button>
@@ -656,7 +656,7 @@ const EditPetModal = ({ isOpen, onClose, pet }: EditPetModalProps) => {
                       variant="ghost"
                       size="icon"
                       onClick={() => handleRemoveQuestion(index)}
-                      className="shrink-0 mt-0.5 text-red-500 hover:text-red-600 hover:bg-red-50"
+                      className="shrink-0 mt-0.5 text-red-500 hover:text-red-600 hover:bg-red-50 cursor-pointer"
                     >
                       <Trash2 className="size-4" />
                     </Button>
@@ -668,7 +668,7 @@ const EditPetModal = ({ isOpen, onClose, pet }: EditPetModalProps) => {
                   variant="outline"
                   size="sm"
                   onClick={handleAddQuestion}
-                  className="mt-2 gap-1.5 border-[#dabcac] text-[#7A6150] hover:bg-[#FFFAF4]"
+                  className="mt-2 gap-1.5 border-[#dabcac] text-[#7A6150] hover:bg-[#FFFAF4] cursor-pointer"
                 >
                   <Plus className="size-4" />
                   Add Question
@@ -682,14 +682,14 @@ const EditPetModal = ({ isOpen, onClose, pet }: EditPetModalProps) => {
           <Button
             variant="outline"
             onClick={onClose}
-            className="border-[#dabcac] text-[#7A6150] hover:bg-[#FFFAF4]"
+            className="border-[#dabcac] text-[#7A6150] hover:bg-[#FFFAF4] cursor-pointer"
           >
             Cancel
           </Button>
           <Button
             onClick={handleSubmitForm}
             disabled={isSubmitting}
-            className="bg-[#C4622D] hover:bg-amber-700"
+            className="bg-[#C4622D] hover:bg-amber-700 cursor-pointer"
           >
             {isSubmitting ? "Saving..." : "Save Changes"}
           </Button>
